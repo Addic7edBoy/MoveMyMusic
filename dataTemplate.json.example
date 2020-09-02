@@ -1,0 +1,65 @@
+{
+    "YM": {
+        "artists": [
+            "artist_name1,artist_name2, artist_name3"
+            ],
+        "albums": {"title - artist": [
+            "track1", "track2"
+        ]},
+        "playlist": {"title": [
+            ["artist_name", "track"],
+            ["artist_name", "track"]
+        ]},
+        "alltracks": [
+            ["artist_name", "track"],
+            ["artist_name", "track"]
+        ]
+    },
+    "SP": {
+        "artists": [
+            "artist_name1,artist_name2, artist_name3"
+        ],
+        "albums": {"title - artist": [
+            "track1", "track2"
+        ]},
+        "playlist": {"title": [
+            ["artist_name", "track"],
+            ["artist_name", "track"]
+        ]},
+        "alltracks": [
+            ["artist_name", "track"],
+            ["artist_name", "track"]
+        ]
+    },
+    "VK": {
+        "albums": {"title - artist": [
+            "track1", "track2"
+        ]},
+        "playlist": {"title": [
+            ["artist_name", "track"],
+            ["artist_name", "track"]
+        ]},
+        "alltracks": [
+            ["artist_name", "track"],
+            ["artist_name", "track"]
+        ]
+    },
+    "NEW": {
+        "artists": [
+            "artist_name1,artist_name2, artist_name3"
+            ],
+        "albums": [{
+            "title": "album_title",
+            "artist": "artist_name",
+            "tracks": []
+            }],
+        "playlist": {"title": [
+            ["artist_name", "track"],
+            ["artist_name", "track"]
+        ]},
+        "alltracks": [{
+            "artist": "artist_name",
+            "track": "track_name"
+        }]
+    }
+}

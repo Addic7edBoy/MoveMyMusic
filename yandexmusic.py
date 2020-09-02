@@ -3,7 +3,7 @@ import collections
 
 from yandex_music.client import Client
 
-from config import Default
+from .config import Default
 import json
 import logging
 
@@ -25,6 +25,7 @@ class YandexMusic(object):
         self.export_playlist = Default.YM_PLAYLISTS
         self.export_data = collections.defaultdict(dict)
 
+    # Проверяем существует ли нужный плейлист. Нет - создаем с нужным тайтлом и возвращаем ID, Да - просто возвращаем ID  
     def check_playlist(self, playlist_title):
         logging.debug(f"Checking if playlist '{playlist_title}' exists")
         my_playlists = self.client.users_playlists_list()
@@ -37,6 +38,7 @@ class YandexMusic(object):
         logging.debug(f"playlist '{playlist_title}' not found; created with id: '{playlist_new['kind']}'")
         return (playlist_new['kind'], playlist_new['revision'])
 
+    # Поиск информации об исполнителе. Возвращает json файл: имя, ID, все альбомы, все треки
     def find_artist(self, artist):
         info_dict = collections.defaultdict(dict)
         artist_info = self.client.search(text=artist, nocorrect=True, type_='artist')['artists']['results'][0]
@@ -56,6 +58,7 @@ class YandexMusic(object):
             json.dump(info_dict, f, indent=4, ensure_ascii=False)
         return info_dict
 
+    # main func for import
     def insert_yandex(self):
         with open(Default.VK_PATH + 'tracks_album.json') as f:
             tracks_album = json.load(f)
