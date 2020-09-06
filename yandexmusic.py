@@ -3,7 +3,7 @@ import collections
 
 from yandex_music.client import Client
 
-from .config import Default
+from config import Default
 import json
 import logging
 
@@ -14,16 +14,12 @@ logging.getLogger('yandex_music').setLevel(logging.ERROR)
 
 
 class YandexMusic(object):
-    def __init__(self):
+    def __init__(self, login, password, export_data):
         self.failed = []
         self.my_id = None
-        self.login = Default.YM_LOGIN
-        self.password = Default.YM_PASSWORD
-        self.client = Client.from_credentials(self.login, self.password)
-        self.export_artist = Default.YM_LIKED_ARTIST
-        self.export_album = Default.YM_ALBUMS
-        self.export_playlist = Default.YM_PLAYLISTS
-        self.export_data = collections.defaultdict(dict)
+        self.client = Client.from_credentials(login, password)
+        self.export_data = export_data
+
 
     # Проверяем существует ли нужный плейлист. Нет - создаем с нужным тайтлом и возвращаем ID, Да - просто возвращаем ID  
     def check_playlist(self, playlist_title):
@@ -102,7 +98,7 @@ class YandexMusic(object):
                 playlist_id, rev = self.check_playlist(album + ' (VK)')
 
                 for artist, songs in tracks_album[album].items():
-                    artist_info = self.find_artist(artist, self.client)
+                    artist_info = self.find_artist(artist)
                     for song in songs.values():
                         try:
                             track_id = artist_info['artist_tracks'][str(song)][0]
@@ -196,63 +192,69 @@ class YandexMusic(object):
         logging.debug('DONE')
         logging.debug(f"{len(self.failed)} couldnt be found, see more in 'failed.json'")
 
-    def export(self):
-
-        # export liked artists list, skip if 'False'
-        if self.export_artist:
-            liked_artists = self.client.users_likes_artists()
-            for like in liked_artists:
-                artist_id = like.artist.id
-                artist_name = like.artist.name
-                self.export_data['artists'][artist_name] = artist_id
-            print(self.export_data)
-
+    def export_artists(self):
+    # export liked artists list, skip if 'False'
+        liked_artists = self.client.users_likes_artists()
+        self.export_data["YM"]["artists"] = []
+        for like in liked_artists:
+            artist_id = like.artist.id
+            artist_name = like.artist.name
+            self.export_data["YM"]["artists"].append(artist_name)
+    
+    def export_albums(self):
         # export liked albums of certain artist(manually defined or ALL), skip if list is empty
-        if self.export_album:
-            logging.debug('START export albums')
-            liked_albums = self.client.users_likes_albums()
-            for like in liked_albums:
-                logging.debug(f"START export album '{like.album.title}'")
-                album_title = like.album.title
-                artist_name = like.album.artists[0].name
-                track_count = like.album.track_count
-                self.export_data['albums'][str(album_title + ' - ' + artist_name)] = [volume.title for volume in like.album.with_tracks().volumes[0]]
-                logging.debug(f"DONE export album '{like.album.title}'")
-            logging.debug(f"DONE export albums'{like.album.title}'")
+        logging.debug('START export albums')
+        liked_albums = self.client.users_likes_albums()
+        self.export_data["YM"]["albums"] = []
+        for like in liked_albums:
+            if like.album.type == 'podcast':
+                logging.debug(f"START export album '{like.album.title}',  {like.album.type}")
+                continue
+            logging.debug(f"START export album '{like.album.title}',  {like.album.type}")
+            album_title = like.album.title
+            artist_name = like.album.artists[0].name
+            track_count = like.album.track_count
 
-        # export your playlists (manually defined or favorites), skip if list is empty
-        if self.export_playlist:
-            logging.debug('START export playlists')
-            if len(self.export_playlist) == 1 and self.export_playlist[0] == 'My favorites':
-                liked_tracks = self.client.users_likes_tracks().tracks
-                self.export_data['playlist']['My favorites'] = []
-                for like in liked_tracks:
-                    track_title = like.track.title
-                    artist_name = like.track.artists[0].name
-                    track_album = like.track.albums[0].title
-                    self.export_data['playlist']['My favorites'].append([artist_name, track_title, track_album])
-                logging.debug(f"DONE export playlist 'My favorites'")
-            else:
-                my_playlists = {playlist.title: playlist.kind for playlist in self.client.users_playlists_list()}
-                for item in self.export_playlist:
-                    logging.debug(f"START export playlist '{item}'")
-                    try:
-                        playlist_id = my_playlists[item]
-                        playlist = self.client.users_playlists(playlist_id)[0].tracks
-                    except KeyError:
-                        logging.error(f"FAILED TO FIND PLAYLIST '{item}'")
-                        continue
-                    self.export_data['playlist'][item] = []
-                    for like in playlist:
-                        track_title = like.track.title
-                        artist_name = like.track.artists[0].name
-                        track_album = like.track.albums[0].title
-                        self.export_data['playlist'][item].append([artist_name, track_title, track_album])
-                    logging.debug(f"DONE export playlist '{item}'")
-        with open('export_YM.json', 'w', encoding='utf-8') as f:
-            json.dump(self.export_data, f, indent=4, ensure_ascii=False)
+            self.export_data['YM']['albums'].append({"title": album_title, "artist": artist_name, "tracks_count": track_count})
+            logging.debug(f"DONE export album '{like.album.title}'")
 
-
-# if __name__ == '__main__':
-#     YM = YandexMusic()
-#     YM.export()
+    # export your playlists (manually defined or favorites), skip if list is empty
+    def export_alltracks(self):
+        logging.debug('START export alltracks')
+        liked_tracks = self.client.users_likes_tracks().tracks
+        track_count = len(liked_tracks)
+        self.export_data["YM"]["alltracks"] = []
+        for like in liked_tracks:
+            track_title = like.track.title
+            artist_name = like.track.artists[0].name
+            # track_album = like.track.albums[0].title
+            self.export_data["YM"]["alltracks"].append([artist_name, track_title])
+            logging.debug(f"{artist_name} - {track_title} OK")
+        logging.debug(f"DONE export playlist 'My favorites' TOTAL: {track_count}")
+    
+    def export_playlists(self, playlists_l=Default.PLAYLIST_L):
+        my_playlists = {playlist.title: playlist.kind for playlist in self.client.users_playlists_list() if playlist}
+        logging.debug('my playlists: {}'.format([item for item in my_playlists.keys()]))
+        logging.debug('specified playlists: {}'.format(playlists_l))
+        if not playlists_l:
+            pass
+        else:
+            my_playlists = {key:val for key,val in my_playlists.items() if key in  playlists_l}
+        for item, playlist_id in my_playlists.items():
+            try:
+                playlist = self.client.users_playlists(playlist_id)[0].tracks
+            except KeyError:
+                logging.error(f"FAILED TO FIND PLAYLIST '{item}'")
+                continue
+            self.export_data["YM"]["playlists"][item] = []
+            logging.debug(f"START export playlist '{item}'")
+            for like in playlist:
+                if 'podcast' in like.track.type:
+                    logging.debug(f"SKIP track with type: '{like.track.type}'")
+                    continue
+                track_title = like.track.title
+                artist_name = like.track.artists[0].name
+                # track_album = like.track.albums[0].title
+                self.export_data["YM"]["playlists"][item].append([artist_name, track_title])
+                logging.debug(f"{artist_name} - {track_title} OK")
+            logging.debug(f"DONE export playlist '{item}'")

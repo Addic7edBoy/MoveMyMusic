@@ -3,48 +3,20 @@
         "artists": [
             "artist_name1,artist_name2, artist_name3"
             ],
-        "albums": {"title - artist": [
-            "track1", "track2"
-        ]},
-        "playlist": {"title": [
+        "albums": [{
+            "title": "album_title",
+            "artist": "artist_name",
+            "tracks": []
+            }],
+        "playlists": {"title": [
             ["artist_name", "track"],
             ["artist_name", "track"]
         ]},
-        "alltracks": [
-            ["artist_name", "track"],
-            ["artist_name", "track"]
-        ]
+        "alltracks": [[
+            "artist", "track_title"
+        ]]
     },
     "SP": {
-        "artists": [
-            "artist_name1,artist_name2, artist_name3"
-        ],
-        "albums": {"title - artist": [
-            "track1", "track2"
-        ]},
-        "playlist": {"title": [
-            ["artist_name", "track"],
-            ["artist_name", "track"]
-        ]},
-        "alltracks": [
-            ["artist_name", "track"],
-            ["artist_name", "track"]
-        ]
-    },
-    "VK": {
-        "albums": {"title - artist": [
-            "track1", "track2"
-        ]},
-        "playlist": {"title": [
-            ["artist_name", "track"],
-            ["artist_name", "track"]
-        ]},
-        "alltracks": [
-            ["artist_name", "track"],
-            ["artist_name", "track"]
-        ]
-    },
-    "NEW": {
         "artists": [
             "artist_name1,artist_name2, artist_name3"
             ],
@@ -53,13 +25,30 @@
             "artist": "artist_name",
             "tracks": []
             }],
-        "playlist": {"title": [
+        "playlists": {"title": [
             ["artist_name", "track"],
             ["artist_name", "track"]
         ]},
-        "alltracks": [{
+        "alltracks": [[
+            "artist", "track_title"
+        ]]
+    },
+    "VK": {
+        "artists": [
+            "artist_name1,artist_name2, artist_name3"
+            ],
+        "albums": [{
+            "title": "album_title",
             "artist": "artist_name",
-            "track": "track_name"
-        }]
+            "tracks": []
+            }],
+        "playlists": [{"title": [
+            ["artist_name", "track"],
+            ["artist_name", "track"]
+        ]}],
+        "alltracks": [
+            ["artist_name", "track_title"],
+            ["artist_name", "track_title"]
+        ]
     }
 }

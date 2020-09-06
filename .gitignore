@@ -1,6 +1,7 @@
 __pycache__
 .cache-*
 config.py
-vk-config
+vk-config*
+vk_config*
 .vscode
 .python-version

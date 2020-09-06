@@ -1,0 +1,574 @@
+{
+    "YM": {
+        "artists": [
+            "Lofi Hip Hop",
+            "VELIAL SQUAD",
+            "Заточка",
+            "Adam jensen",
+            "Обстоятельства",
+            "Neffex",
+            "RAM",
+            "Водокачка",
+            "Daila",
+            "playingtheangel",
+            "Тони Раут",
+            "Shinedown",
+            "Unlike Pluto",
+            "ssshhhiiittt!",
+            "Portugal. The Man",
+            "Call Me Karizma",
+            "Joji",
+            "Rickey F",
+            "Loqiemean",
+            "Хаски",
+            "STED.D",
+            "Pyrokinesis",
+            "Tessa Violet",
+            "alt-J",
+            "The White Stripes",
+            "Muse",
+            "KALEO",
+            "The Weeknd",
+            "$uicideBoy$",
+            "twenty one pilots",
+            "Nirvana",
+            "Bring Me The Horizon",
+            "алёна швец.",
+            "grandson",
+            "Blues Saraceno",
+            "Foster The People",
+            "System of A Down",
+            "Gorillaz",
+            "Hozier",
+            "Juice WRLD"
+        ],
+        "albums": [
+            {
+                "title": "Цирк восходящего солнца",
+                "artist": "playingtheangel",
+                "tracks_count": 15
+            },
+            {
+                "title": "Trench",
+                "artist": "twenty one pilots",
+                "tracks_count": 14
+            },
+            {
+                "title": "Маленькая роща деревьев дикой вишни",
+                "artist": "нехудожник.",
+                "tracks_count": 9
+            },
+            {
+                "title": "Great Depression",
+                "artist": "Markul",
+                "tracks_count": 9
+            },
+            {
+                "title": "Formula",
+                "artist": "Rickey F",
+                "tracks_count": 8
+            }
+        ],
+        "playlists": {},
+        "alltracks": []
+    },
+    "SP": {
+        "artists": [
+            "Daila",
+            "ssshhhiiittt!",
+            "Muse",
+            "Обстоятельства",
+            "Bring Me The Horizon",
+            "$uicideBoy$",
+            "The Weeknd",
+            "Заточка",
+            "Hozier",
+            "Loqiemean",
+            "Gorillaz",
+            "Joji",
+            "alt-J",
+            "Twenty One Pilots",
+            "NEFFEX",
+            "The White Stripes",
+            "Juice WRLD",
+            "Tony Raut",
+            "grandson",
+            "RAM",
+            "Водокачка",
+            "Portugal. The Man",
+            "Unlike Pluto",
+            "Blues Saraceno",
+            "Tessa Violet",
+            "Playingtheangel",
+            "System Of A Down",
+            "Call Me Karizma",
+            "Pyrokinesis",
+            "Nirvana",
+            "STED.D",
+            "Shinedown",
+            "Foster The People",
+            "KALEO",
+            "Alyona Shvets",
+            "Adam Jensen"
+        ],
+        "albums": [
+            {
+                "title": "Маленькая роща деревьев дикой вишни",
+                "artist": "нехудожник.",
+                "tracks_count": 9
+            },
+            {
+                "title": "Great Depression",
+                "artist": "Markul",
+                "tracks_count": 9
+            },
+            {
+                "title": "Trench",
+                "artist": "Twenty One Pilots",
+                "tracks_count": 14
+            },
+            {
+                "title": "Любимые песни (воображаемых) людей",
+                "artist": "Husky",
+                "tracks_count": 13
+            },
+            {
+                "title": "Маленькая роща деревьев дикой вишни",
+                "artist": "нехудожник.",
+                "tracks_count": 9
+            },
+            {
+                "title": "Great Depression",
+                "artist": "Markul",
+                "tracks_count": 9
+            },
+            {
+                "title": "Trench",
+                "artist": "Twenty One Pilots",
+                "tracks_count": 14
+            },
+            {
+                "title": "Любимые песни (воображаемых) людей",
+                "artist": "Husky",
+                "tracks_count": 13
+            }
+        ],
+        "playlists": {
+            "Shuffle 2(Y.music)": [
+                [
+                    "море волнуется",
+                    "Pyrokinesis"
+                ],
+                [
+                    "призраки",
+                    "STED.D"
+                ],
+                [
+                    "ТЫ НЕ ПРЫГНЕШЬ ЗА МНОЙ",
+                    "Masha Hima"
+                ],
+                [
+                    "Не обижу",
+                    "Феху"
+                ],
+                [
+                    "Bills",
+                    "grandson"
+                ],
+                [
+                    "первое правило",
+                    "lowlife"
+                ],
+                [
+                    "SADEASTWOOD",
+                    "RAM"
+                ],
+                [
+                    "Каприз",
+                    "MOTELBLVCK"
+                ],
+                [
+                    "ПАДОНОК",
+                    "nmilova"
+                ],
+                [
+                    "Сигарета",
+                    "Ручной Рептилоид"
+                ],
+                [
+                    "Я люблю тебя, возвращайся домой",
+                    "Эйфория"
+                ],
+                [
+                    "Пепел мой последний друг",
+                    "Соседи Стерпят"
+                ],
+                [
+                    "Будущего нет",
+                    "СКОРОСТЬ"
+                ],
+                [
+                    "Моя весна",
+                    "Мимо Вселенной"
+                ],
+                [
+                    "Лучше / Проще",
+                    "Вокруг фонарного столба"
+                ],
+                [
+                    "Ручонки-героин",
+                    "Saypink!"
+                ],
+                [
+                    "Скромней",
+                    "Alphavite"
+                ],
+                [
+                    "Ничего святого",
+                    "Pyrokinesis"
+                ],
+                [
+                    "Проводник",
+                    "STED.D"
+                ],
+                [
+                    "6:00",
+                    "grandson"
+                ],
+                [
+                    "Не монстр",
+                    "Loqiemean"
+                ],
+                [
+                    "Всё, что осталось нам",
+                    "Aikko"
+                ],
+                [
+                    "Desiigner",
+                    "Bumble Beezy"
+                ],
+                [
+                    "Пот (prod. MINIGUNPUNK)",
+                    "RAM"
+                ],
+                [
+                    "AirplaneMode",
+                    "BONES"
+                ],
+                [
+                    "THUMP",
+                    "Don Quez"
+                ],
+                [
+                    "BACKWOODS",
+                    "104"
+                ],
+                [
+                    "B.I.D",
+                    "Markul"
+                ],
+                [
+                    "Дайджест",
+                    "Bumble Beezy"
+                ],
+                [
+                    "Кара (prod. by shawtyglock)",
+                    "VELIAL SQUAD"
+                ],
+                [
+                    "Как такое может быть",
+                    "fivekageprod."
+                ],
+                [
+                    "Я слышу",
+                    "Минаева"
+                ],
+                [
+                    "Серпантин",
+                    "Markul"
+                ],
+                [
+                    "Пульс",
+                    "Лера Яскевич"
+                ],
+                [
+                    "Остановись",
+                    "Обстоятельства"
+                ],
+                [
+                    "Позвони ему, дура",
+                    "Мимо Вселенной"
+                ],
+                [
+                    "От автора",
+                    "Asper X"
+                ],
+                [
+                    "Пьяный мастер",
+                    "МОЛОДОСТЬ ВНУТРИ"
+                ],
+                [
+                    "Я хочу чтоб ты стреляла по своим",
+                    "DenDerty"
+                ],
+                [
+                    "ЗАПИШИ МОЙ ЗВУК",
+                    "Космонавтов Нет"
+                ],
+                [
+                    "Самая тёмная ночь",
+                    "снова не успел"
+                ],
+                [
+                    "Манямир",
+                    "Нонконформистка"
+                ],
+                [
+                    "Картонная",
+                    "Asper X"
+                ],
+                [
+                    "TroubledYouth",
+                    "BONES"
+                ],
+                [
+                    "Bone Collecting",
+                    "Unaverage Gang"
+                ],
+                [
+                    "White Girls in the Back of the Bus",
+                    "Burgos"
+                ],
+                [
+                    "Angels & Demons",
+                    "jxdn"
+                ],
+                [
+                    "Pomni",
+                    "VASILEVSKY"
+                ],
+                [
+                    "КОЛЫБЕЛЬНАЯ",
+                    "KILL MILK"
+                ]
+            ],
+            "New Playlist": [
+                [
+                    "Фрикшоу",
+                    "VELIAL SQUAD"
+                ],
+                [
+                    "Бессонница",
+                    "Anacondaz"
+                ],
+                [
+                    "Накануне",
+                    "Oxxxymiron"
+                ],
+                [
+                    "Предпоследний день",
+                    "Rickey F."
+                ],
+                [
+                    "ПОДАРОК",
+                    "OBLADAET"
+                ],
+                [
+                    "Корми демонов по расписанию",
+                    "Pyrokinesis"
+                ],
+                [
+                    "Бледный Лёд",
+                    "May Wave$"
+                ],
+                [
+                    "Свитер Рубчинского",
+                    "Schokk"
+                ],
+                [
+                    "Быть Дауном",
+                    "Loqiemean"
+                ],
+                [
+                    "Астронавт",
+                    "ATL"
+                ],
+                [
+                    "Компас",
+                    "Markul"
+                ],
+                [
+                    "Конец света",
+                    "LSP"
+                ],
+                [
+                    "Смарт",
+                    "PHARAOH"
+                ],
+                [
+                    "Кровавый Спорт",
+                    "JEEMBO"
+                ],
+                [
+                    "SpaceX",
+                    "Illumate"
+                ],
+                [
+                    "Rolling Stoner",
+                    "Thomas Mraz"
+                ],
+                [
+                    "ONE LOVE",
+                    "GONE.Fludd"
+                ],
+                [
+                    "Лёд",
+                    "Basta"
+                ],
+                [
+                    "Улети",
+                    "T-Fest"
+                ],
+                [
+                    "Нет монет",
+                    "Monetochka"
+                ],
+                [
+                    "Паранойя",
+                    "VELIAL SQUAD"
+                ],
+                [
+                    "Painkiller",
+                    "Jeembo"
+                ],
+                [
+                    "Переплетено",
+                    "Oxxxymiron"
+                ],
+                [
+                    "Ты знаешь, кто он",
+                    "Anacondaz"
+                ],
+                [
+                    "Ветер",
+                    "Rickey F."
+                ],
+                [
+                    "Терновый венец эволюции",
+                    "Pyrokinesis"
+                ],
+                [
+                    "Пара Найков",
+                    "Zamay"
+                ],
+                [
+                    "Вендетта",
+                    "Tony Raut"
+                ],
+                [
+                    "Бледный Лёд",
+                    "May Wave$"
+                ],
+                [
+                    "UNIVERSE",
+                    "OBLADAET"
+                ],
+                [
+                    "Fata Morgana",
+                    "Markul"
+                ],
+                [
+                    "Священный рэйв",
+                    "ATL"
+                ],
+                [
+                    "KONSTRUKT",
+                    "Porchy"
+                ],
+                [
+                    "Ползать",
+                    "LSP"
+                ]
+            ]
+        },
+        "alltracks": []
+    },
+    "VK": {
+        "albums": [],
+        "playlists": {
+            "great depression": [
+                [
+                    "markul",
+                    "отрицание"
+                ],
+                [
+                    "markul",
+                    "компас"
+                ],
+                [
+                    "markul",
+                    "25"
+                ],
+                [
+                    "markul",
+                    "деньги на ветер"
+                ],
+                [
+                    "markul",
+                    "blues"
+                ],
+                [
+                    "markul",
+                    "без тебя"
+                ],
+                [
+                    "markul",
+                    "худший друг"
+                ],
+                [
+                    "markul",
+                    "миражи"
+                ],
+                [
+                    "markul",
+                    "серпантин"
+                ]
+            ],
+            "мои дети не будут скучать": [
+                [
+                    "anacondaz",
+                    "мои дети не будут скучать"
+                ],
+                [
+                    "anacondaz",
+                    "пусть они умрут"
+                ],
+                [
+                    "anacondaz",
+                    "все хорошо"
+                ],
+                [
+                    "anacondaz",
+                    "гуд-трип"
+                ],
+                [
+                    "anacondaz",
+                    "синий кит"
+                ],
+                [
+                    "anacondaz",
+                    "новый приют"
+                ],
+                [
+                    "anacondaz",
+                    "иди за второй"
+                ],
+                [
+                    "anacondaz",
+                    "бойня номер шесть"
+                ]
+            ]
+        },
+        "alltracks": []
+    }
+}

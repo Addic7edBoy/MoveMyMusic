@@ -15,19 +15,19 @@ logging.getLogger('urllib3.connectionpool').setLevel(logging.ERROR)
 
 
 class Spotify(object):
-    def __init__(self):
-        self.export_SP = collections.defaultdict(dict)
+    def __init__(self, username, scope, data):
+        self.export_data = data
         self.username = Default.SP_USERNAME
         self.scope = 'user-library-modify user-library-read user-follow-read user-follow-modify playlist-read-private playlist-modify-public playlist-modify-private playlist-read-collaborative'
-        self.token = util.prompt_for_user_token(
+        token = util.prompt_for_user_token(
                                     self.username,
                                     self.scope,
                                     client_id=Default.SP_CLIENT_ID,
                                     client_secret=Default.SP_CLIENT_SECRET,
                                     redirect_uri='http://example.com')
-        if self.token:
-            logging.debug(f'token OK: ({self.token})')
-            self.sp = spotipy.Spotify(auth=self.token)
+        if token:
+            logging.debug(f'token OK: (token)')
+            self.sp = spotipy.Spotify(auth=token)
         else:
             logging.error(f"Can't get token for {self.username}")
 
@@ -35,7 +35,7 @@ class Spotify(object):
         for i, item in enumerate(tracks['items']):
             track = item['track']
             print("   %d %32.32s %s" % (i, track['artists'][0]['name'], track['name']))
-            self.export_SP['playlist'][playlist_name].append([track['name'], track['artists'][0]['name']])
+            self.export_data["SP"]["playlists"][playlist_name].append([track['name'], track['artists'][0]['name']])
 
     def export_playlists(self):
         playlists = self.sp.user_playlists(self.username)
@@ -44,7 +44,7 @@ class Spotify(object):
             print(playlist['name'])
             if playlist['owner']['id'] == self.username.lower():    # ONLY OWNED BY USE
                 logging.debug(f"START export playlists '{playlist['name']}'")
-                self.export_SP['playlist'][playlist['name']] = []
+                self.export_data["SP"]["playlists"][playlist['name']] = []
                 results = self.sp.playlist(playlist['id'], fields="tracks,next")
                 tracks = results['tracks']
                 logging.debug('showing tracks')
@@ -52,32 +52,32 @@ class Spotify(object):
                 while tracks['next']:
                     tracks = self.sp.next(tracks)
                     self.show_tracks(tracks, playlist['name'])
-                logging.debug(F"DONE export playlist '{playlist['name']}'; {playlist['tracks']['total']}:{len(self.export_SP['playlist'][playlist['name']])}")
+                logging.debug(f"DONE export playlist '{playlist['name']}'; {playlist['tracks']['total']}:{len(self.export_data['SP']['playlists'][playlist['name']])}")
 
-    def export_tracks(self):
-        self.export_SP['playlist']['My favorites'] = []
+    def export_alltracks(self):
+        self.export_data["SP"]["alltracks"] = []
         tracks = self.sp.current_user_saved_tracks(limit=50)
         logging.debug(f"START export playlists 'My favorites'")
         self.show_tracks(tracks, 'My favorites')
         while tracks['next']:
             tracks = self.sp.next(tracks)
             self.show_tracks(tracks, 'My favorites')
-        logging.debug(f"DONE export playlist 'My favorites', Total: {len(self.export_SP['playlist']['My favorites'])}")
+        logging.debug(f"DONE export playlist 'My favorites', Total: {len(self.export_data['SP']['alltracks'])}")
 
-    def export_artist(self):
-        self.export_SP['artists'] = []
+    def export_artists(self):
+        self.export_data["SP"]["artists"] = []
         results = self.sp.current_user_followed_artists()
         artists = results['artists']
         for item in artists['items']:
             print(item['name'])
-            self.export_SP['artists'].append(item['name'])
+            self.export_data["SP"]["artists"].append(item['name'])
         while artists['next']:
             logging.debug('Exporting next page of artists...')
             artists = self.sp.next(artists)['artists']
             for item in artists['items']:
                 print(item['name'])
-                self.export_SP['artists'].append(item['name'])
-        logging.debug(f"DONE export artists, Total: {len(self.export_SP['artists'])}")
+                self.export_data["SP"]["artists"].append(item['name'])
+        logging.debug(f"DONE export artists, Total: {len(self.export_data['SP']['artists'])}")
 
     def export_albums(self):
         albums = self.sp.current_user_saved_albums()
@@ -85,7 +85,12 @@ class Spotify(object):
             album_title = item['album']['name']
             artist_name = item['album']['artists'][0]['name']
             tracks = item['album']['tracks']['items']
-            self.export_SP['albums'][album_title + ' - ' + artist_name] = [track['name'] for track in tracks]
+            self.export_data["SP"]["albums"].append({
+                                                    "title": album_title,
+                                                    "artist": artist_name,
+                                                    "tracks_count": len(tracks)
+            })
+            # self.export_data["SP"]["albums"][album_title + ' - ' + artist_name] = [track['name'] for track in tracks]
         while albums['next']:
             logging.debug('Exporting next page of albums...')
             albums = self.sp.next(albums)
@@ -93,8 +98,13 @@ class Spotify(object):
                 album_title = item['album']['name']
                 artist_name = item['album']['artists'][0]['name']
                 tracks = item['album']['tracks']['items']
-                self.export_SP['albums'][album_title + ' - ' + artist_name] = [track['name'] for track in tracks]
-        logging.debug(f"DONE export albums, Total: {len(self.export_SP['albums'])}")
+                self.export_data["SP"]["albums"].append({
+                                                    "title": album_title,
+                                                    "artist": artist_name,
+                                                    "tracks_count": len(tracks)
+                })
+                # self.export_data["SP"]["albums"][album_title + ' - ' + artist_name] = [track['name'] for track in tracks]
+        logging.debug(f"DONE export albums, Total: {len(self.export_data['SP']['albums'])}")
 
     def unfollow_all(self):
         results = self.sp.current_user_followed_artists()
@@ -185,7 +195,7 @@ class Spotify(object):
             try:
                 results = self.sp.search(q='album:' + title + ' ' + 'artist:' + artist, type='album')
                 artist_name = results['albums']['items'][0]['artists'][0]['name']
-                artist_uri = results['albums']['items'][0]['artists'][0]['uri']
+                # artist_uri = results['albums']['items'][0]['artists'][0]['uri']
                 album_title = results['albums']['items'][0]['name']
                 album_uri = results['albums']['items'][0]['uri']
                 total_tracks = results['albums']['items'][0]['total_tracks']
@@ -200,14 +210,3 @@ class Spotify(object):
                 self.sp.current_user_saved_albums_add(albums=[album_uri])
                 logging.debug(f"DONE album '{album_title}-{artist_name}' added")
 
-
-if __name__ == '__main__':
-    SP = Spotify()
-    # with open('export_SP.json', 'w', encoding='utf-8') as f:
-    #     json.dump(SP.export_SP, f, indent=4, ensure_ascii=False)
-    # SP.export_albums()
-    if Default.START == 'YM':
-        with open('export_YM.json') as f:
-            dt = json.load(f)
-    # SP.import_artist(dt)
-    SP.import_playlists(dt)
