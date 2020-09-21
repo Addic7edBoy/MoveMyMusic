@@ -10,10 +10,22 @@ import vk_api
 import sys
 import distutils
 from distutils import util
+from timeit import default_timer as timer
 
 
 def str2bool(v):
     return bool(distutils.util.strtobool(v))
+
+
+def clear_template(path=Default.DATATMP):
+    with open(path) as f:
+        data = json.load(f)
+    for i in data:
+        for j in data[i]:
+            data[i][j].clear()
+    with open('dataTemplate.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+    return data
 
 
 def process_args(args, defaults):
@@ -42,42 +54,83 @@ def process_args(args, defaults):
         python __main__.py export 1 --alltracks false --albums false --artists false --playlists true --playlists []
     """
 
-    parser = argparse.ArgumentParser(description='0-vk, 1-ym, 2-sp')
+    parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(title='subcommands',
-                                    description='valid subcommands',
-                                    help='description')
-    parser.add_argument('--setup', dest='gui', type=int,
-                                help='step by step setup and run')
+                                       description='valid subcommands',
+                                       help='description')
 
-    export_parser = subparsers.add_parser('export', help='export music to json file')
+    parser_base = argparse.ArgumentParser(add_help=False)
+    parser_base.add_argument('--log-path', dest="log_path",
+                             metavar=defaults.LOG_PATH,
+                             type=str, default=defaults.LOG_PATH,
+                             help=('log file path (default: %s)'
+                                   % (defaults.LOG_PATH)))
+
+    parser_base.set_defaults(scope=defaults.SCOPE)
+    parser_base.set_defaults(vk_login=defaults.VK_LOGIN)
+    parser_base.set_defaults(vk_pass=defaults.VK_PASSWORD)
+    parser_base.set_defaults(ym_login=defaults.YM_LOGIN)
+    parser_base.set_defaults(ym_pass=defaults.YM_PASSWORD)
+    parser_base.set_defaults(sp_username=defaults.SP_USERNAME)
+
+    parser_model = argparse.ArgumentParser(add_help=False)
+
+    parser_model.set_defaults(source="file")
+    parser_model.set_defaults(target="file")
+
+    parser_model.set_defaults(data_path=defaults.DATATMP)
+
+    parser_model.add_argument('--playlists', dest='playlists', metavar=defaults.PLAYLIST,
+                              type=str2bool, required=True, default=defaults.PLAYLIST,
+                              help=('include playlists as well (default: %s)' % (defaults.PLAYLIST)))
+
+    parser_model.add_argument('--artists', dest='artists', metavar=defaults.ARTISTS,
+                              type=str2bool, default=defaults.ARTISTS,
+                              help=('include artists as well (default: %s)' % (defaults.ARTISTS)))
+
+    parser_model.add_argument('--albums', dest='albums', metavar=defaults.ALBUMS,
+                              type=str2bool, default=defaults.ALBUMS,
+                              help=('include albums as well (default: %s)' % (defaults.ALBUMS)))
+
+    parser_model.add_argument('--playlists-l', dest='playlists_l',
+                              metavar=defaults.PLAYLIST_L, nargs='+',
+                              default=defaults.PLAYLIST_L,
+                              help=('include albums as well (default: %s)' % (defaults.PLAYLIST_L)))
+
+    parser_model.add_argument('--alltracks', dest='alltracks',
+                              metavar=defaults.ALLTRACKS, type=str2bool,
+                              default=Default.ALLTRACKS,
+                              help=('include albums as well (default: %s)' % (defaults.ALLTRACKS)))
+
+    export_parser = subparsers.add_parser('export', parents=[parser_base, parser_model],
+                                          help='export music to json file')
     export_parser.set_defaults(phase='export')
-    export_parser.add_argument('--data-path', dest='data_path', type=str, default=defaults.DATATMP, help=('path+filename to data template(default: %s)' % (defaults.DATATMP)))
-    export_parser.add_argument('source', choices=[0,1,2], type=int, help='service_name to export music from')
-    export_parser.add_argument('--playlists', dest='playlists', type=str2bool, required=True, default=defaults.PLAYLIST, help=('include playlists as well (default: %s)' % (defaults.PLAYLIST)))
-    export_parser.add_argument('--artists', dest='artists', type=str2bool, default=defaults.ARTISTS, help=('include artists as well (default: %s)' % (defaults.ARTISTS)))
-    export_parser.add_argument('--albums', dest='albums', type=str2bool, default=defaults.ALBUMS, help=('include albums as well (default: %s)' % (defaults.ALBUMS)))
-    export_parser.add_argument('--playlists-l', dest='playlists_l', nargs='+', default=defaults.PLAYLIST_L, help=('include albums as well (default: %s)' % (defaults.PLAYLIST_L)))
-    export_parser.add_argument('--alltracks', dest='alltracks', type=str2bool, default=Default.ALLTRACKS, help=('include albums as well (default: %s)' % (defaults.ALLTRACKS)))
-    # export_parser.set_defaults(func=export_only)
+    export_parser.add_argument('--data-path', dest='data_path', type=str, default=defaults.DATATMP,
+                               help=('path+filename to data template(default: %s)' % (defaults.DATATMP)))
+    export_parser.add_argument('source', choices=[
+                               "vk", "ym", "sp"], type=str, help='service_name to export music from')
+    export_parser.add_argument('-t', '--target', dest='target', choices=[
+                               "vk", "ym", "sp"], type=str, help='service_name to export music to')
 
-    import_parser = subparsers.add_parser('import', help='import music from json file')
+    import_parser = subparsers.add_parser('import', parents=[parser_base, parser_model],
+                                          help='import music from json file')
     import_parser.set_defaults(phase='import')
-    import_parser.add_argument('--data-path', dest='data_path', type=str, default=defaults.DATATMP, help=('path+filename to data template(default: %s)' % (defaults.DATATMP)))
-    import_parser.add_argument('target', choices=[1,2], type=int,
-                                help='service_name to import music to')
-    import_parser.add_argument('--playlists', dest='playlists', type=str2bool, default=Default.PLAYLIST, help=('include playlists as well (default: %s)' % (defaults.PLAYLIST)))
-    import_parser.add_argument('--artists', dest='artists', type=str2bool, default=defaults.ARTISTS, help=('include artists as well (default: %s)' % (defaults.ARTISTS)))
-    import_parser.add_argument('--albums', dest='albums', type=str2bool, default=defaults.ALBUMS, help=('include albums as well (default: %s)' % (defaults.ALBUMS)))
-    import_parser.add_argument('--playlists-l', dest='playlists_l', type=str2bool, default=defaults.PLAYLIST_L, help=('include albums as well (default: %s)' % (defaults.PLAYLIST_L)))
-    import_parser.add_argument('--alltracks', dest='alltracks', type=str2bool, default=Default.ALLTRACKS, help=('include albums as well (default: %s)' % (defaults.ALLTRACKS)))
-    # import_parser.set_defaults(func=import_music)
-    
+    import_parser.add_argument('--data-path', dest='data_path', type=str, default=defaults.DATATMP,
+                               help=('path+filename to data template(default: %s)' % (defaults.DATATMP)))
+    import_parser.add_argument('target', choices=['ym', 'sp'], type=str,
+                               help='service_name to import music to')
+    import_parser.add_argument('-s', '--source', dest='source', choices=['vk', 'ym', 'sp'], type=str,
+                               help='service_name to import music to')
+    test_parser = subparsers.add_parser('tests', parents=[parser_base],
+                                        help='import music from json file')
+    import_parser.set_defaults(phase='tests')
+
     parameters = parser.parse_args(args)
     return parameters
 
 
 def main(args=None):
-    
+
     if args is None:
         args = sys.argv[1:]
     print(args)
@@ -85,61 +138,73 @@ def main(args=None):
     print(parameters, type(parameters))
     data_path = parameters.data_path
 
-
     try:
         with open(data_path) as f:
-                data = json.load(f)
+            data = json.load(f)
     except FileNotFoundError as e:
         print('we got: ', e.__class__)
         if parameters.phase == 'export':
             pass
         elif parameters.phase == 'import':
-            print('you have nothing to import yet')
+            return 'you have nothing to import yet'
         else:
-            print('make shure file_path is correct')
+            return 'make sure file_path is correct'
 
     if parameters.phase == 'export':
-        if parameters.source == 0:
-            vkaudio = VK.get_auth(login = Default.VK_LOGIN,
-                                password = Default.VK_PASSWORD)
+        if parameters.source == "vk":
+            vkaudio = VK.get_auth(login=parameters.vk_login,
+                                  password=parameters.vk_pass)
             if parameters.playlists:
-                data = VK.export_playlist(vkaudio, data, parameters.playlists_l)
+                data = VK.export_playlist(
+                    vkaudio, data, parameters.playlists_l)
             if parameters.alltracks:
-                tpart = VK.export_alltracks(vkaudio)
-                with open('tpart.json', 'w', encoding='utf-8') as f:
-                    json.dump(tpart, f, indent=4, ensure_ascii=False)
+                return 'TODO'
+                # tpart = VK.export_alltracks(vkaudio)
+            with open('dataTemplate.json', 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            return
 
-        elif parameters.source == 1:
-            ym = YandexMusic(Default.YM_LOGIN, Default.YM_PASSWORD, data)
+        else:
+            if parameters.source == 'ym':
+                imModel = YandexMusic(
+                    parameters.ym_login, parameters.ym_pass, data, playlists_l=parameters.playlists_l)
+            elif parameters.source == 'sp':
+                imModel = Spotify(parameters.sp_username,
+                                  parameters.scope, data)
             if parameters.playlists:
-                ym.export_playlists(playlists_l = parameters.playlists_l)
+                imModel.export_playlists()
             if parameters.alltracks:
-                ym.export_alltracks()
+                imModel.export_alltracks()
             if parameters.artists:
-                ym.export_artists()
+                imModel.export_artists()
             if parameters.albums:
-                ym.export_albums()
-            data = ym.export_data
-        elif parameters.source == 2:
-            sp = Spotify(Default.SP_USERNAME, Default.SCOPE, data)
-            if parameters.playlists:
-                sp.export_playlists()
-            if parameters.alltracks:
-                sp.export_alltracks()
-            if parameters.artists:
-                sp.export_artists()
-            if parameters.albums:
-                sp.export_albums()
-            data = sp.export_data
-        with open('dataTemplate.json', 'w', encoding='utf-8') as f:
-                        json.dump(data, f, indent=4, ensure_ascii=False)
+                imModel.export_albums()
+            data = imModel.export_data
+            with open('dataTemplate.json', 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+            if parameters.target != 'file':
+                parameters.phase = 'import'
+            else:
+                return
+
     elif parameters.phase == 'import':
-        if parameters.target == 1:
-            pass
-        elif parameters.target == 2:
-            pass
+        if parameters.target == "ym":
+            imModel = YandexMusic(parameters.ym_login,
+                                  parameters.ym_pass, data)
+        elif parameters.target == "sp":
+            imModel = Spotify(parameters.sp_username, parameters.scope, data)
+            if parameters.playlists:
+                imModel.import_playlists()
+            if parameters.alltracks:
+                imModel.import_alltracks()
+            if parameters.artists:
+                imModel.import_artists()
+            if parameters.albums:
+                imModel.import_albums()
     else:
         print('slomalos(')
+
+
 print('end')
 if __name__ == '__main__':
     main()

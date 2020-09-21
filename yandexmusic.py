@@ -14,11 +14,12 @@ logging.getLogger('yandex_music').setLevel(logging.ERROR)
 
 
 class YandexMusic(object):
-    def __init__(self, login, password, export_data):
+    def __init__(self, login, password, export_data, playlists_l):
         self.failed = []
         self.my_id = None
         self.client = Client.from_credentials(login, password)
         self.export_data = export_data
+        self.playlists_l = playlists_l
 
 
     # Проверяем существует ли нужный плейлист. Нет - создаем с нужным тайтлом и возвращаем ID, Да - просто возвращаем ID  
@@ -232,14 +233,14 @@ class YandexMusic(object):
             logging.debug(f"{artist_name} - {track_title} OK")
         logging.debug(f"DONE export playlist 'My favorites' TOTAL: {track_count}")
     
-    def export_playlists(self, playlists_l=Default.PLAYLIST_L):
+    def export_playlists(self):
         my_playlists = {playlist.title: playlist.kind for playlist in self.client.users_playlists_list() if playlist}
         logging.debug('my playlists: {}'.format([item for item in my_playlists.keys()]))
-        logging.debug('specified playlists: {}'.format(playlists_l))
-        if not playlists_l:
+        logging.debug('specified playlists: {}'.format(self.playlists_l))
+        if not self.playlists_l:
             pass
         else:
-            my_playlists = {key:val for key,val in my_playlists.items() if key in  playlists_l}
+            my_playlists = {key:val for key,val in my_playlists.items() if key in  self.playlists_l}
         for item, playlist_id in my_playlists.items():
             try:
                 playlist = self.client.users_playlists(playlist_id)[0].tracks

@@ -21,7 +21,7 @@
             "Rickey F",
             "Loqiemean",
             "Хаски",
-            "STED.D",
+            "sted.d",
             "Pyrokinesis",
             "Tessa Violet",
             "alt-J",
@@ -69,7 +69,90 @@
                 "tracks_count": 8
             }
         ],
-        "playlists": {},
+        "playlists": {
+            "H8": [
+                [
+                    "sted.d",
+                    "Против"
+                ],
+                [
+                    "sted.d",
+                    "Хой"
+                ],
+                [
+                    "Пикчи!",
+                    "Я поджигаю свой дом"
+                ],
+                [
+                    "Katanacss",
+                    "Молодым и пьяным"
+                ],
+                [
+                    "Loqiemean",
+                    "Ввв"
+                ],
+                [
+                    "МОЛОДОСТЬ ВНУТРИ",
+                    "Один дома"
+                ],
+                [
+                    "sted.d",
+                    "Моргни, если ты в заложниках"
+                ],
+                [
+                    "playingtheangel",
+                    "Пропорция уязвимости"
+                ],
+                [
+                    "Феху",
+                    "Не обижу"
+                ],
+                [
+                    "saypink!",
+                    "Молодость со мной"
+                ],
+                [
+                    "playingtheangel",
+                    "В неожиданном ракурсе"
+                ],
+                [
+                    "Asper X",
+                    "Локус генома"
+                ],
+                [
+                    "playingtheangel",
+                    "Химия"
+                ],
+                [
+                    "Loqiemean",
+                    "Китобой"
+                ],
+                [
+                    "Aikko",
+                    "Купи мою боль"
+                ],
+                [
+                    "playingtheangel",
+                    "бракованная дрянь"
+                ],
+                [
+                    "Aikko",
+                    "черное сердце"
+                ],
+                [
+                    "Oxxxymiron",
+                    "Горсвет"
+                ],
+                [
+                    "Loqiemean",
+                    "Лирический герой"
+                ],
+                [
+                    "Call Me Karizma",
+                    "Monster (Under My Bed)"
+                ]
+            ]
+        },
         "alltracks": []
     },
     "SP": {
@@ -154,6 +237,144 @@
             }
         ],
         "playlists": {
+            "New Playlist": [
+                [
+                    "Фрикшоу",
+                    "VELIAL SQUAD"
+                ],
+                [
+                    "Бессонница",
+                    "Anacondaz"
+                ],
+                [
+                    "Накануне",
+                    "Oxxxymiron"
+                ],
+                [
+                    "Предпоследний день",
+                    "Rickey F."
+                ],
+                [
+                    "ПОДАРОК",
+                    "OBLADAET"
+                ],
+                [
+                    "Корми демонов по расписанию",
+                    "Pyrokinesis"
+                ],
+                [
+                    "Бледный Лёд",
+                    "May Wave$"
+                ],
+                [
+                    "Свитер Рубчинского",
+                    "Schokk"
+                ],
+                [
+                    "Быть Дауном",
+                    "Loqiemean"
+                ],
+                [
+                    "Астронавт",
+                    "ATL"
+                ],
+                [
+                    "Компас",
+                    "Markul"
+                ],
+                [
+                    "Конец света",
+                    "LSP"
+                ],
+                [
+                    "Смарт",
+                    "PHARAOH"
+                ],
+                [
+                    "Кровавый Спорт",
+                    "JEEMBO"
+                ],
+                [
+                    "SpaceX",
+                    "Illumate"
+                ],
+                [
+                    "Rolling Stoner",
+                    "Thomas Mraz"
+                ],
+                [
+                    "ONE LOVE",
+                    "GONE.Fludd"
+                ],
+                [
+                    "Лёд",
+                    "Basta"
+                ],
+                [
+                    "Улети",
+                    "T-Fest"
+                ],
+                [
+                    "Нет монет",
+                    "Monetochka"
+                ],
+                [
+                    "Паранойя",
+                    "VELIAL SQUAD"
+                ],
+                [
+                    "Painkiller",
+                    "Jeembo"
+                ],
+                [
+                    "Переплетено",
+                    "Oxxxymiron"
+                ],
+                [
+                    "Ты знаешь, кто он",
+                    "Anacondaz"
+                ],
+                [
+                    "Ветер",
+                    "Rickey F."
+                ],
+                [
+                    "Терновый венец эволюции",
+                    "Pyrokinesis"
+                ],
+                [
+                    "Пара Найков",
+                    "Zamay"
+                ],
+                [
+                    "Вендетта",
+                    "Tony Raut"
+                ],
+                [
+                    "Бледный Лёд",
+                    "May Wave$"
+                ],
+                [
+                    "UNIVERSE",
+                    "OBLADAET"
+                ],
+                [
+                    "Fata Morgana",
+                    "Markul"
+                ],
+                [
+                    "Священный рэйв",
+                    "ATL"
+                ],
+                [
+                    "KONSTRUKT",
+                    "Porchy"
+                ],
+                [
+                    "Ползать",
+                    "LSP"
+                ]
+            ],
             "Shuffle 2(Y.music)": [
                 [
                     "море волнуется",
@@ -351,224 +572,630 @@
                     "КОЛЫБЕЛЬНАЯ",
                     "KILL MILK"
                 ]
-            ],
-            "New Playlist": [
-                [
-                    "Фрикшоу",
-                    "VELIAL SQUAD"
-                ],
-                [
-                    "Бессонница",
-                    "Anacondaz"
-                ],
-                [
-                    "Накануне",
-                    "Oxxxymiron"
-                ],
-                [
-                    "Предпоследний день",
-                    "Rickey F."
-                ],
-                [
-                    "ПОДАРОК",
-                    "OBLADAET"
-                ],
-                [
-                    "Корми демонов по расписанию",
-                    "Pyrokinesis"
-                ],
-                [
-                    "Бледный Лёд",
-                    "May Wave$"
-                ],
-                [
-                    "Свитер Рубчинского",
-                    "Schokk"
-                ],
-                [
-                    "Быть Дауном",
-                    "Loqiemean"
-                ],
-                [
-                    "Астронавт",
-                    "ATL"
-                ],
-                [
-                    "Компас",
-                    "Markul"
-                ],
-                [
-                    "Конец света",
-                    "LSP"
-                ],
-                [
-                    "Смарт",
-                    "PHARAOH"
-                ],
-                [
-                    "Кровавый Спорт",
-                    "JEEMBO"
-                ],
-                [
-                    "SpaceX",
-                    "Illumate"
-                ],
-                [
-                    "Rolling Stoner",
-                    "Thomas Mraz"
-                ],
-                [
-                    "ONE LOVE",
-                    "GONE.Fludd"
-                ],
-                [
-                    "Лёд",
-                    "Basta"
-                ],
-                [
-                    "Улети",
-                    "T-Fest"
-                ],
-                [
-                    "Нет монет",
-                    "Monetochka"
-                ],
-                [
-                    "Паранойя",
-                    "VELIAL SQUAD"
-                ],
-                [
-                    "Painkiller",
-                    "Jeembo"
-                ],
-                [
-                    "Переплетено",
-                    "Oxxxymiron"
-                ],
-                [
-                    "Ты знаешь, кто он",
-                    "Anacondaz"
-                ],
-                [
-                    "Ветер",
-                    "Rickey F."
-                ],
-                [
-                    "Терновый венец эволюции",
-                    "Pyrokinesis"
-                ],
-                [
-                    "Пара Найков",
-                    "Zamay"
-                ],
-                [
-                    "Вендетта",
-                    "Tony Raut"
-                ],
-                [
-                    "Бледный Лёд",
-                    "May Wave$"
-                ],
-                [
-                    "UNIVERSE",
-                    "OBLADAET"
-                ],
-                [
-                    "Fata Morgana",
-                    "Markul"
-                ],
-                [
-                    "Священный рэйв",
-                    "ATL"
-                ],
-                [
-                    "KONSTRUKT",
-                    "Porchy"
-                ],
-                [
-                    "Ползать",
-                    "LSP"
-                ]
             ]
         },
-        "alltracks": []
+        "alltracks": [
+            [
+                "таблетки",
+                "Playingtheangel"
+            ],
+            [
+                "fuck up",
+                "gabriel black"
+            ],
+            [
+                "Я",
+                "Daite Tank (!)"
+            ],
+            [
+                "Мы",
+                "Daite Tank (!)"
+            ],
+            [
+                "Anarchy",
+                "Delta Heavy"
+            ],
+            [
+                "Rob A Bank",
+                "Confetti"
+            ],
+            [
+                "Berserker",
+                "Mazare"
+            ],
+            [
+                "Hang",
+                "8 Graves"
+            ],
+            [
+                "dead yet (with phem)",
+                "gabriel black"
+            ],
+            [
+                "Crush",
+                "Tessa Violet"
+            ],
+            [
+                "Johnny",
+                "Call Me Karizma"
+            ],
+            [
+                "Angel",
+                "Call Me Karizma"
+            ],
+            [
+                "Mirrors",
+                "Arrested Youth"
+            ],
+            [
+                "Western Love",
+                "Unlike Pluto"
+            ],
+            [
+                "ГОРСВЕТ",
+                "Loqiemean"
+            ],
+            [
+                "Drugs",
+                "UPSAHL"
+            ],
+            [
+                "Insecure",
+                "Jazmine Sullivan"
+            ],
+            [
+                "rockstar",
+                "Post Malone"
+            ],
+            [
+                "До зимы",
+                "Oxxxymiron"
+            ],
+            [
+                "Песенка Гремлина",
+                "Oxxxymiron"
+            ],
+            [
+                "Still Cold / Pathway Private",
+                "Night Lovell"
+            ],
+            [
+                "Астронавт",
+                "ATL"
+            ],
+            [
+                "Восточный Мордор",
+                "Oxxxymiron"
+            ],
+            [
+                "Девочка Пиздец",
+                "Oxxxymiron"
+            ],
+            [
+                "Башня из слоновой кости",
+                "Oxxxymiron"
+            ],
+            [
+                "Переплетено",
+                "Oxxxymiron"
+            ],
+            [
+                "Scary",
+                "Stormzy"
+            ],
+            [
+                "Blood In The Cut - Aire Atlantica Remix",
+                "K.Flay"
+            ],
+            [
+                "Shutdown",
+                "Skepta"
+            ],
+            [
+                "Emperor's New Clothes",
+                "Panic! At The Disco"
+            ],
+            [
+                "The Getaway",
+                "Red Hot Chili Peppers"
+            ],
+            [
+                "Lemon Eyes",
+                "Meg Myers"
+            ],
+            [
+                "i hate u, i love u (feat. olivia o'brien)",
+                "gnash"
+            ],
+            [
+                "Daybreak",
+                "OVERWERK"
+            ],
+            [
+                "On the Floor",
+                "IceJJFish"
+            ],
+            [
+                "Knock Knock",
+                "Mac Miller"
+            ],
+            [
+                "Weekend (feat. Miguel)",
+                "Mac Miller"
+            ],
+            [
+                "Bring Me Along",
+                "Pepper"
+            ],
+            [
+                "One Love",
+                "Bob Marley & The Wailers"
+            ],
+            [
+                "Beach In Hawaii",
+                "Ziggy Marley"
+            ],
+            [
+                "What I Got",
+                "Sublime"
+            ],
+            [
+                "One Step Closer",
+                "Linkin Park"
+            ],
+            [
+                "Bleed It Out",
+                "Linkin Park"
+            ],
+            [
+                "Let Her Go",
+                "Passenger"
+            ],
+            [
+                "Pity Party",
+                "Melanie Martinez"
+            ],
+            [
+                "Wild Things",
+                "Alessia Cara"
+            ],
+            [
+                "One Dance",
+                "Drake"
+            ],
+            [
+                "End of the World",
+                "Dave Days"
+            ],
+            [
+                "Lifetime Ago",
+                "Greg Laswell"
+            ],
+            [
+                "Dodged A Bullet",
+                "Greg Laswell"
+            ],
+            [
+                "Sleeping Lotus",
+                "Joep Beving"
+            ],
+            [
+                "Falling, Catching",
+                "Agnes Obel"
+            ],
+            [
+                "This Is What You Came For (feat. Rihanna)",
+                "Calvin Harris"
+            ],
+            [
+                "IV. Sweatpants",
+                "Childish Gambino"
+            ],
+            [
+                "Hypnotic",
+                "Zella Day"
+            ],
+            [
+                "Getting Away With Murder",
+                "Papa Roach"
+            ],
+            [
+                "Fight For You",
+                "Morgan Page"
+            ],
+            [
+                "Feel So Close - Radio Edit",
+                "Calvin Harris"
+            ],
+            [
+                "Fallen Leaves",
+                "Billy Talent"
+            ],
+            [
+                "crushcrushcrush",
+                "Paramore"
+            ],
+            [
+                "New Americana",
+                "Halsey"
+            ],
+            [
+                "Sophie So",
+                "Hippo Campus"
+            ],
+            [
+                "Souls",
+                "Hippo Campus"
+            ],
+            [
+                "South",
+                "Hippo Campus"
+            ],
+            [
+                "Suicide Saturday",
+                "Hippo Campus"
+            ],
+            [
+                "Seventeen",
+                "Sjowgren"
+            ],
+            [
+                "Don't Mind",
+                "Kent Jones"
+            ],
+            [
+                "Cut It (feat. Young Dolph)",
+                "O.T. Genasis"
+            ],
+            [
+                "Sing for Absolution",
+                "Muse"
+            ],
+            [
+                "Fury",
+                "Muse"
+            ],
+            [
+                "Time is Running Out",
+                "Muse"
+            ],
+            [
+                "Supermassive Black Hole",
+                "Muse"
+            ],
+            [
+                "Undisclosed Desires",
+                "Muse"
+            ],
+            [
+                "Uprising",
+                "Muse"
+            ],
+            [
+                "Madness",
+                "Muse"
+            ],
+            [
+                "The Approaching Night",
+                "Philip Wesley"
+            ],
+            [
+                "My Little Match",
+                "DREAMERS"
+            ],
+            [
+                "No Love",
+                "DREAMERS"
+            ],
+            [
+                "Wolves (You Got Me)",
+                "DREAMERS"
+            ],
+            [
+                "All My Friends",
+                "Dylan Kelly"
+            ],
+            [
+                "Hero Of War",
+                "Rise Against"
+            ],
+            [
+                "Prayer Of The Refugee",
+                "Rise Against"
+            ],
+            [
+                "Savior",
+                "Rise Against"
+            ],
+            [
+                "Endgame",
+                "Rise Against"
+            ],
+            [
+                "Satellite",
+                "Rise Against"
+            ],
+            [
+                "Blackout",
+                "Tritonal"
+            ],
+            [
+                "Panda",
+                "Desiigner"
+            ],
+            [
+                "Tribute to nujabes",
+                "Kondor"
+            ],
+            [
+                "Story of my life",
+                "Kondor"
+            ],
+            [
+                "Molly",
+                "Tyga"
+            ],
+            [
+                "I Bet My Life",
+                "Imagine Dragons"
+            ],
+            [
+                "Shots - Broiler Remix",
+                "Imagine Dragons"
+            ],
+            [
+                "Warriors",
+                "Imagine Dragons"
+            ],
+            [
+                "Demons",
+                "Imagine Dragons"
+            ],
+            [
+                "Radioactive",
+                "Imagine Dragons"
+            ],
+            [
+                "Drawing Pins",
+                "Nothing But Thieves"
+            ],
+            [
+                "Lover, Please Stay",
+                "Nothing But Thieves"
+            ],
+            [
+                "Hostage",
+                "Nothing But Thieves"
+            ],
+            [
+                "Excuse Me",
+                "Nothing But Thieves"
+            ],
+            [
+                "Itch",
+                "Nothing But Thieves"
+            ],
+            [
+                "Backroad Song",
+                "Granger Smith"
+            ],
+            [
+                "DRUGS",
+                "DREAMERS"
+            ],
+            [
+                "Way down We Go",
+                "KALEO"
+            ],
+            [
+                "Loud(y)",
+                "Lewis Del Mar"
+            ],
+            [
+                "Bloodfeather",
+                "Highly Suspect"
+            ],
+            [
+                "Wolves of Winter",
+                "Biffy Clyro"
+            ],
+            [
+                "Contemplate",
+                "Wale"
+            ],
+            [
+                "Cole World",
+                "J. Cole"
+            ],
+            [
+                "Whispers in the Dark",
+                "Skillet"
+            ],
+            [
+                "Never Forget You",
+                "Zara Larsson"
+            ],
+            [
+                "People Say - Acoustic",
+                "Portugal. The Man"
+            ],
+            [
+                "Fantastic Pace",
+                "Portugal. The Man"
+            ],
+            [
+                "All My People",
+                "Portugal. The Man"
+            ],
+            [
+                "60 Years",
+                "Portugal. The Man"
+            ],
+            [
+                "The Dead Dog",
+                "Portugal. The Man"
+            ],
+            [
+                "Smile",
+                "Portugal. The Man"
+            ],
+            [
+                "You Carried Us (Share with Me the Sun)",
+                "Portugal. The Man"
+            ],
+            [
+                "Got It All (This Can't Be Living Now)",
+                "Portugal. The Man"
+            ],
+            [
+                "Holy Roller (Hallelujah)",
+                "Portugal. The Man"
+            ],
+            [
+                "Evil Friends",
+                "Portugal. The Man"
+            ],
+            [
+                "Working For It",
+                "ZHU"
+            ],
+            [
+                "Don't Let Me Down (feat. Daya)",
+                "The Chainsmokers"
+            ],
+            [
+                "Work from Home",
+                "Fifth Harmony"
+            ],
+            [
+                "Purple Yellow Red and Blue - Passion Pit Remix",
+                "Portugal. The Man"
+            ],
+            [
+                "So American",
+                "Portugal. The Man"
+            ],
+            [
+                "Modern Jesus",
+                "Portugal. The Man"
+            ],
+            [
+                "Real Love",
+                "Tom Odell"
+            ],
+            [
+                "I Think It's Going to Rain Today",
+                "Tom Odell"
+            ],
+            [
+                "Another Love",
+                "Tom Odell"
+            ],
+            [
+                "Friends of Friends",
+                "Hospitality"
+            ],
+            [
+                "Matchstick",
+                "American Royalty"
+            ],
+            [
+                "Argonauts",
+                "The Little Ones"
+            ],
+            [
+                "Shotgun - Radio Edit",
+                "Yellow Claw"
+            ],
+            [
+                "Atomic Man",
+                "Portugal. The Man"
+            ],
+            [
+                "Faded",
+                "Alan Walker"
+            ],
+            [
+                "CASTLE OF GLASS",
+                "Linkin Park"
+            ],
+            [
+                "Bridge over the stairs",
+                "Kondor"
+            ],
+            [
+                "Bring Me To Life",
+                "Evanescence"
+            ],
+            [
+                "Bleeding Out",
+                "Imagine Dragons"
+            ],
+            [
+                "Sex",
+                "Cheat Codes"
+            ],
+            [
+                "Wake Up Call",
+                "Nothing But Thieves"
+            ],
+            [
+                "Upside Down & Inside Out",
+                "OK Go"
+            ],
+            [
+                "Spirits",
+                "The Strumbellas"
+            ],
+            [
+                "IBETCHU - Original Mix",
+                "Yellow Claw"
+            ],
+            [
+                "Sound & Color",
+                "Alabama Shakes"
+            ],
+            [
+                "While I'm Alive",
+                "STRFKR"
+            ],
+            [
+                "Psycho",
+                "Muse"
+            ],
+            [
+                "Trip Switch",
+                "Nothing But Thieves"
+            ],
+            [
+                "Rise",
+                "Blockheads"
+            ],
+            [
+                "You're Going Down",
+                "Sick Puppies"
+            ],
+            [
+                "We are the Hearts",
+                "EXGF"
+            ],
+            [
+                "CoCo",
+                "O.T. Genasis"
+            ],
+            [
+                "begin again",
+                "Purity Ring"
+            ],
+            [
+                "Stay (feat. Maty Noyes)",
+                "Kygo"
+            ]
+        ]
     },
     "VK": {
         "albums": [],
-        "playlists": {
-            "great depression": [
-                [
-                    "markul",
-                    "отрицание"
-                ],
-                [
-                    "markul",
-                    "компас"
-                ],
-                [
-                    "markul",
-                    "25"
-                ],
-                [
-                    "markul",
-                    "деньги на ветер"
-                ],
-                [
-                    "markul",
-                    "blues"
-                ],
-                [
-                    "markul",
-                    "без тебя"
-                ],
-                [
-                    "markul",
-                    "худший друг"
-                ],
-                [
-                    "markul",
-                    "миражи"
-                ],
-                [
-                    "markul",
-                    "серпантин"
-                ]
-            ],
-            "мои дети не будут скучать": [
-                [
-                    "anacondaz",
-                    "мои дети не будут скучать"
-                ],
-                [
-                    "anacondaz",
-                    "пусть они умрут"
-                ],
-                [
-                    "anacondaz",
-                    "все хорошо"
-                ],
-                [
-                    "anacondaz",
-                    "гуд-трип"
-                ],
-                [
-                    "anacondaz",
-                    "синий кит"
-                ],
-                [
-                    "anacondaz",
-                    "новый приют"
-                ],
-                [
-                    "anacondaz",
-                    "иди за второй"
-                ],
-                [
-                    "anacondaz",
-                    "бойня номер шесть"
-                ]
-            ]
-        },
+        "playlists": {},
         "alltracks": []
     }
 }
