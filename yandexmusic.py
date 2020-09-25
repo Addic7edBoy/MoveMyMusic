@@ -14,12 +14,13 @@ logging.getLogger('yandex_music').setLevel(logging.ERROR)
 
 
 class YandexMusic(object):
-    def __init__(self, login, password, export_data, playlists_l):
+    def __init__(self, login, password, export_data, playlists_l, source=None):
         self.failed = []
         self.my_id = None
         self.client = Client.from_credentials(login, password)
         self.export_data = export_data
         self.playlists_l = playlists_l
+        self.source = source
 
 
     # Проверяем существует ли нужный плейлист. Нет - создаем с нужным тайтлом и возвращаем ID, Да - просто возвращаем ID  

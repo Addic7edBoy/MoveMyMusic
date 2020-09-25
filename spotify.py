@@ -48,7 +48,6 @@ class Spotify(object):
         playlists = self.sp.user_playlists(self.username)
         logging.debug(f"START export onwned playlists")
         for playlist in playlists['items']:
-            print(playlist['name'])
             if playlist['owner']['id'] == self.username.lower():    # ONLY OWNED BY USE
                 logging.debug(f"START export playlists '{playlist['name']}'")
                 self.export_data["SP"]["playlists"][playlist['name']] = []
@@ -79,7 +78,6 @@ class Spotify(object):
         results = self.sp.current_user_followed_artists()
         artists = results['artists']
         for item in artists['items']:
-            print(item['name'])
             self.export_data["SP"]["artists"].append(item['name'])
         while artists['next']:
             logging.debug('Exporting next page of artists...')
@@ -128,47 +126,46 @@ class Spotify(object):
         self.sp.user_unfollow_artists(artist_ids)
 
     def import_playlists(self):
-        for item in ['VK', 'YM']:
-            for title, tracks in self.export_data[item]["playlists"]:
+        for item in self.export_data[self.source]["playlists"]:
+            track_ids = []
+            for playlist in playlists:
                 track_ids = []
-                for playlist in playlists:
-                    track_ids = []
-                    new_playlist = self.sp.user_playlist_create(
-                        user=self.username, name=playlist + '(Y.music)')
-                    playlist_id = new_playlist['id']
-                    playlist_name = new_playlist['name']
-                    logging.debug(f"CREATED new playlist '{playlist_name}'")
+                new_playlist = self.sp.user_playlist_create(
+                    user=self.username, name=playlist + '(Y.music)')
+                playlist_id = new_playlist['id']
+                playlist_name = new_playlist['name']
+                logging.debug(f"CREATED new playlist '{playlist_name}'")
 
-                    for track in playlists[playlist]:
-                        results = self.sp.search(
-                            q='artist:' + track[0] + ' ' + 'track:' + track[1] + ' ' + 'album:' + track[2], type='track')
-                        tracks = results['tracks']
-                        if len(tracks['items']) == 1:
+                for track in playlists[playlist]:
+                    results = self.sp.search(
+                        q='artist:' + track[0] + ' ' + 'track:' + track[1] + ' ' + 'album:' + track[2], type='track')
+                    tracks = results['tracks']
+                    if len(tracks['items']) == 1:
+                        track_ids.append(tracks['items'][0]['id'])
+                        logging.debug(
+                            f"ADDED track '{tracks['items'][0]['name']}' to playlist '{playlist_name}'")
+                    elif len(tracks['items']) > 1:
+                        artist_name = tracks['items'][0]['artists'][0]['name']
+                        track_title = tracks['items'][0]['name']
+                        album_title = tracks['items'][0]['album']['name']
+                        if artist_name.casefold() == track[0] and track_title.casefold() == track[1].casefold() and album_title.casefold() == track[2].casefold():
                             track_ids.append(tracks['items'][0]['id'])
                             logging.debug(
-                                f"ADDED track '{tracks['items'][0]['name']}' to playlist '{playlist_name}'")
-                        elif len(tracks['items']) > 1:
-                            artist_name = tracks['items'][0]['artists'][0]['name']
-                            track_title = tracks['items'][0]['name']
-                            album_title = tracks['items'][0]['album']['name']
-                            if artist_name.casefold() == track[0] and track_title.casefold() == track[1].casefold() and album_title.casefold() == track[2].casefold():
-                                track_ids.append(tracks['items'][0]['id'])
-                                logging.debug(
-                                    f"ADDED track '{track_title}' to playlist '{playlist_name}'")
-                            else:
-                                logging.warning(
-                                    f"Track '{artist_name}-{track_title}' not in best match; verification needed")
-                        elif len(tracks['items']) == 0:
-                            logging.error(
-                                f"ERROR COULDNT FIND TRACK '{track[0]}-{track[1]}'")
-                    self.sp.user_playlist_add_tracks(
-                        self.username, playlist_id, track_ids)
-                    logging.debug(
-                        f"DONE {len(track_ids)} tracks added to playlist '{playlist_name}'")
-                logging.debug(f"DONE import playlists")
+                                f"ADDED track '{track_title}' to playlist '{playlist_name}'")
+                        else:
+                            logging.warning(
+                                f"Track '{artist_name}-{track_title}' not in best match; verification needed")
+                    elif len(tracks['items']) == 0:
+                        logging.error(
+                            f"ERROR COULDNT FIND TRACK '{track[0]}-{track[1]}'")
+                self.sp.user_playlist_add_tracks(
+                    self.username, playlist_id, track_ids)
+                logging.debug(
+                    f"DONE {len(track_ids)} tracks added to playlist '{playlist_name}'")
+            logging.debug(f"DONE import playlists")
 
-    def import_artist(self, dt):
-        artists = dt['artists']
+    def import_artists(self):
+        artists = self.export_data[self.source.upper()]["artists"]
         artist_ids = []
         logging.debug(f"Total artist count: {len(artists)}")
         for artist in artists:
@@ -216,27 +213,32 @@ class Spotify(object):
         logging.debug(f"DONE artists count: {len(artist_ids)}")
         self.sp.user_follow_artists(artist_ids)
 
-    def import_albums(self, dt):
-        import_albums = dt['albums']
-        for k, v in import_albums.items():
-            title, artist = re.split(' - ', k)
+    def import_albums(self):
+        import_albums = self.export_data[self.source.upper()]["albums"]
+        for item in import_albums:
+            album_title = item["title"]
+            artist_name = item["artist"]
             try:
                 results = self.sp.search(
-                    q='album:' + title + ' ' + 'artist:' + artist, type='album')
-                artist_name = results['albums']['items'][0]['artists'][0]['name']
+                    q='album:' + album_title + ' ' + 'artist:' + artist_name, type='album')
+                search_artist = results['albums']['items'][0]['artists'][0]['name']
                 # artist_uri = results['albums']['items'][0]['artists'][0]['uri']
-                album_title = results['albums']['items'][0]['name']
-                album_uri = results['albums']['items'][0]['uri']
-                total_tracks = results['albums']['items'][0]['total_tracks']
+                search_title = results['albums']['items'][0]['name']
+                search_uri = results['albums']['items'][0]['uri']
+                search_tracks = results['albums']['items'][0]['total_tracks']
             except IndexError:
                 logging.error(
-                    f"COUDNT FIND ALBUM '{title}-{artist}' ON SPOTIFY")
+                    f"COUDNT FIND ALBUM '{album_title}-{artist_name}' ON SPOTIFY")
                 continue
 
-            #   Verification
-            if title.casefold() == album_title.casefold() and artist.casefold() == artist_name.casefold() and int(len(v)) == int(total_tracks):
-                logging.debug(f"Album '{title}-{artist}' OK")
+            # Verification
+            if search_title.casefold() == album_title.casefold() and search_artist.casefold() == artist_name.casefold() and int(len(v)) == int(search_tracks):
+                logging.debug(f"Album '{album_title}-{artist_name}' OK")
                 # add album if not already added
-                self.sp.current_user_saved_albums_add(albums=[album_uri])
+                self.sp.current_user_saved_albums_add(albums=[search_uri])
                 logging.debug(
                     f"DONE album '{album_title}-{artist_name}' added")
+
+
+    def import_alltracks(self):
+        pass
