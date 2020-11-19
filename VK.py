@@ -25,7 +25,7 @@ def get_auth(login, password):
     vkaudio = VkAudio(vk_session)
     return vkaudio
 
-def export_playlist(vkaudio, datafile, specplaylist=Default.PLAYLIST_L):
+def export_playlists(vkaudio, datafile, specplaylist=Default.PLAYLIST_L):
     # Decide what we need to import
     logging.debug('GETPLAYLIST True')
     all_playlist = vkaudio.get_albums()                                                           
