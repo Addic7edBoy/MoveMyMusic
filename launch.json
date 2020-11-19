@@ -1,0 +1,238 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // Ожидаемый вывод: экспортирует плейлисты в датафайл
+            "name": "Python: export vk playlists",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["export", "vk", "--playlists", "True",
+                    "--alltracks", "False", "--clean-plate"]
+        },
+        {
+            // Ожидаемый вывод: выйдет через исключения, датафайл невредим
+            "name": "Python: export vk alltracks",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["export", "vk", "--playlists", "False",
+                    "--alltracks", "True", "--clean-plate"]
+        },
+        {
+            // Ожидаемый вывод: экспортирует плейлисты, на alltracks загнется и сломается,
+            // Но плейлисты должны остаться в дата файле
+            // выйти должен сам, через исключения
+            "name": "Python: export vk playlists and alltracks",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["export", "vk", "--playlists", "True",
+                    "--alltracks", "True", "--clean-plate"]
+        },
+        {
+            "name": "Python: export ym everything",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["export", "ym", "--playlists", "True",
+                    "--alltracks", "True", "--artists", "True",
+                    "--albums",  "True","--clean-plate"]
+        },
+        {
+            // minor changes (alltracks off)
+            "name": "Python: export ym almost everything",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["export", "ym", "--playlists", "True",
+                    "--alltracks", "False", "--artists", "True",
+                    "--albums",  "True","--clean-plate"]
+        },
+        {
+            "name": "Python: export sp everything",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["export", "ym", "--playlists", "True",
+                    "--alltracks", "True", "--artists", "True",
+                    "--albums",  "True","--clean-plate"]
+        },
+        {
+            // minor changes (alltracks off)
+            "name": "Python: export sp almost everything",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["export", "ym", "--playlists", "True",
+                    "--alltracks", "False", "--artists", "True",
+                    "--albums",  "True","--clean-plate"]
+        },
+        {
+            // Import phase
+            "name": "Python: import ym everything",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["import", "ym", "--playlists", "True",
+                    "--alltracks", "True", "--artists", "True",
+                    "--albums",  "True"]
+        },
+        {
+            // minor changes (alltracks off)
+            "name": "Python: import ym almost everything",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["export", "ym", "--playlists", "True",
+                    "--alltracks", "False", "--artists", "True",
+                    "--albums", "True"]
+        },
+        {
+            "name": "Python: import sp everything",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["import", "sp", "--playlists", "True",
+                    "--alltracks", "True", "--artists", "True",
+                    "--albums", "True"]
+        },
+        {
+            // minor changes (alltracks off)
+            "name": "Python: import sp almost everything",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["import", "sp", "--playlists", "True",
+                    "--alltracks", "False", "--artists", "True",
+                    "--albums",  "True"]
+        },
+        {   
+            // full run everything from vk to sp
+            "name": "Python: run full vk ---> sp",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["run", "--source","vk", "--target", "sp",
+                    "--alltracks", "True", "--artists", "True",
+                    "--albums",  "True", "--playlists", "True"]
+        },
+        {
+            // full run everything from vk to ym
+            "name": "Python: run full vk ---> ym",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["run", "--source","vk", "--target", "ym",
+                    "--alltracks", "True", "--artists", "True",
+                    "--albums",  "True", "--playlists", "True"]
+        },
+        {   
+            // full run everything from vk to sp
+            "name": "Python: run full vk ---> sp",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["run", "--source","vk", "--target", "sp",
+                    "--alltracks", "True", "--artists", "True",
+                    "--albums",  "True", "--playlists", "True"]
+        },
+        {
+            // selective run from vk to ym (alltracks off, playlists-l on)
+            "name": "Python: run full vk ---> ym",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["run", "--source","vk", "--target", "ym",
+                    "--alltracks", "False", "--artists", "True",
+                    "--albums",  "True", "--playlists", "True",
+                    "--playlists-l", "Feel Alive"]
+        },
+        {
+            // selective run from vk to ym (alltracks off, playlists-l on)
+            "name": "Python: run full vk ---> ym",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["run", "--source","vk", "--target", "ym",
+                    "--alltracks", "False", "--artists", "True",
+                    "--albums",  "True", "--playlists", "True",
+                    "--playlists-l", "Feel Alive"]
+        },
+        {
+            // selective run from vk to sp (alltracks off, playlists-l on)
+            "name": "Python: run full vk ---> sp",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["run", "--source","vk", "--target", "sp",
+                    "--alltracks", "False", "--artists", "True",
+                    "--albums",  "True", "--playlists", "True",
+                    "--playlists-l", "Feel Alive"]
+        },
+        {
+            // full run everything from ym to sp
+            "name": "Python: run full ym ---> ym",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["run", "--source","vk", "--target", "ym",
+                    "--alltracks", "True", "--artists", "True",
+                    "--albums",  "True", "--playlists", "True", "--clean-plate"]
+        },
+        {   
+            // full run everything from sp to ym
+            "name": "Python: run full sp ---> ym",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["run", "--source","sp", "--target", "ym",
+                    "--alltracks", "True", "--artists", "True",
+                    "--albums",  "True", "--playlists", "True", "--clean-plate"]
+        },
+        {
+            // selective run from sp to ym (alltracks off, playlists-l on)
+            "name": "Python: run full sp ---> ym",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["run", "--source","sp", "--target", "ym",
+                    "--alltracks", "False", "--artists", "True",
+                    "--albums",  "True", "--playlists", "False", "--clean-plate"]
+        },
+        {
+            // selective run from ym to sp (alltracks off, playlists-l on)
+            "name": "Python: run full ym ---> sp",
+            "type": "python",
+            "request": "launch",
+            "module": "MoveMyMusic",
+            "console": "externalTerminal",
+            "args": ["run", "--source","ym", "--target", "sp",
+                    "--alltracks", "False", "--artists", "True",
+                    "--albums",  "True", "--playlists", "False", "--clean-plate"]
+        }       
+    ]
+}

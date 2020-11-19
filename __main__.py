@@ -12,6 +12,8 @@ import sys
 import distutils
 from distutils import util
 from timeit import default_timer as timer
+import os
+from shutil import copy2
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -23,16 +25,38 @@ def str2bool(v):
     return bool(distutils.util.strtobool(v))
 
 
+# проверяем остался ли поврежденный дата файл, если да - удаляем
+# копируем и переименовываем файл-экземпляр
+# если и он пропал я не виноват
+def repair_template(path):
+    if os.path.exists(path):
+        os.remove(path)
+        logging.debug(f"old data file ({path}) deleted")
+    if not os.path.exists(str(path) + '.example'):
+        logging.error(f"file 'dataTemplate.json.example' was not found")
+    else:
+        copy2(str(path) + '.example', str(path))
+        logging.debug('example template successfully copied')
+        return
+        # os.rename(str(path)+'.example', path)
+    
+
+
 # clears data file from past records
 def clear_template(path=Default.DATATMP):
     with open(path) as f:
-        data = json.load(f)
-    for i in data:
-        for j in data[i]:
-            data[i][j].clear()
-    with open('dataTemplate.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-    return data
+        try:
+            data = json.load(f)
+        except json.decoder.JSONDecodeError as jex:
+            logging.error(f"Invalid JSON response, dropping to original template \n If the problem persists, check connection to desired service")
+            repair_template(path)
+            return
+        for i in data:
+            for j in data[i]:
+                data[i][j].clear()
+        with open('dataTemplate.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        return data
 
 
 # Parser for command-line options
@@ -226,7 +250,8 @@ def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
             imModel.export_playlists()
     if parameters.alltracks:
         if imSource == 'vk':
-            return 'vk alltracks export unavailable'
+            logging.error('vk alltracks export unavailable')
+            sys.exit()
         else:
             imModel.export_alltracks()
     if parameters.artists:

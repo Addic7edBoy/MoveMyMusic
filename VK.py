@@ -21,10 +21,12 @@ def get_auth(login, password):
     try:
         vk_session.auth()
     except vk_api.AuthError as error_msg:
+        logging.error('Two factor auth needed. If you have it on purpose - disable. \n Otherwise try waiting some time')
         return error_msg
     logging.debug('Auth OK')
     vkaudio = VkAudio(vk_session)
     return vkaudio
+
 
 def export_playlists(vkaudio, datafile, specplaylist=Default.PLAYLIST_L):
     # Decide what we need to import
@@ -49,6 +51,7 @@ def export_playlists(vkaudio, datafile, specplaylist=Default.PLAYLIST_L):
     logging.debug('get playlist tracks DONE')
     return datafile
 
+
 # СУКИ ВСЁ СЛОМАЛИ НИЧЕ НЕ РАБОТАЕТ(
 def export_alltracks(vkaudio):
     data = []
@@ -63,15 +66,10 @@ def export_alltracks(vkaudio):
     logging.debug('all tracks export DONE. stats: list of list - {0}'.format(len(data)))
     return data
 
+
 def export_data(data):
     return data
 
-def validate():
-    mel = True
-    if mel:
-        print("yukies")
-    else:
-        print('oof')
 
 def seperate_albums():
     with open('ppart.json') as f:
