@@ -31,3 +31,13 @@ class Default(object):
     SP_CLIENT_ID = "REPLACE_ME"
     SP_CLIENT_SECRET = "REPLACE_ME"
     SP_USERNAME = "REPLACE_ME"
+    
+        # GENERAL
+    PLAYLIST = False     # by default gets tracks, set to True if album wanted
+    PLAYLIST_L = []     # select which albums e.g ['my playlist1', 'my playlist2'], default None(all)
+    ARTISTS = True
+    ALBUMS = True
+    ALLTRACKS = True
+    DATATMP = './dataTemplate.json'
+    LOG_PATH = './logs'
+    CLEAN_PLATE = False

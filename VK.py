@@ -13,6 +13,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
+
 def get_auth(login, password):
     # init vk API session with given credentials
     vk_session = vk_api.VkApi(login, password)
@@ -62,6 +63,8 @@ def export_alltracks(vkaudio):
     logging.debug('all tracks export DONE. stats: list of list - {0}'.format(len(data)))
     return data
 
+def export_data(data):
+    return data
 
 def validate():
     mel = True
@@ -73,7 +76,6 @@ def validate():
 def seperate_albums():
     with open('ppart.json') as f:
                     data = json.load(f)
-    mysep = set()
     for k,v in data["VK"]["playlists"].items():
         for v in data["VK"]["playlists"][k]:
             print(v[0])

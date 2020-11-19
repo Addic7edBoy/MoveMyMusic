@@ -6,6 +6,7 @@ import sys
 import argparse
 import json
 from vk_api.audio import VkAudio
+import logging
 import vk_api
 import sys
 import distutils
@@ -13,10 +14,16 @@ from distutils import util
 from timeit import default_timer as timer
 
 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+
+# converting strings like 'False True 0 1' to bool
 def str2bool(v):
     return bool(distutils.util.strtobool(v))
 
 
+# clears data file from past records
 def clear_template(path=Default.DATATMP):
     with open(path) as f:
         data = json.load(f)
@@ -28,6 +35,7 @@ def clear_template(path=Default.DATATMP):
     return data
 
 
+# Parser for command-line options
 def process_args(args, defaults):
 
     parser = argparse.ArgumentParser()
@@ -36,27 +44,25 @@ def process_args(args, defaults):
     subparsers = parser.add_subparsers(title='subcommands',
                                        description='valid subcommands',
                                        help='description')
-
-    parser_base = argparse.ArgumentParser(add_help=False)
     
-    parser_base.add_argument('--log-path', dest="log_path",
-                             metavar=defaults.LOG_PATH,
-                             type=str, default=defaults.LOG_PATH,
-                             help=('log file path (default: %s)'
-                                   % (defaults.LOG_PATH)))
+    parser_base = argparse.ArgumentParser(add_help=False)
 
-    parser_base.set_defaults(scope=defaults.SCOPE)
+    parser_base.set_defaults(scope=defaults.SCOPE)  # область необходимых разрешений для работы со spotify API
     parser_base.set_defaults(vk_login=defaults.VK_LOGIN)
     parser_base.set_defaults(vk_pass=defaults.VK_PASSWORD)
     parser_base.set_defaults(ym_login=defaults.YM_LOGIN)
     parser_base.set_defaults(ym_pass=defaults.YM_PASSWORD)
     parser_base.set_defaults(sp_username=defaults.SP_USERNAME)
 
+    parser_base.add_argument('--log-path', dest="log_path",
+                             metavar=defaults.LOG_PATH,
+                             type=str, default=defaults.LOG_PATH,
+                             help=('log file path (default: %s)'
+                                   % (defaults.LOG_PATH)))
+
     
     # ОБЩИЕ аргументы
     parser_model = argparse.ArgumentParser(add_help=False)
-    # parser_model.set_defaults(source="file")
-    # parser_model.set_defaults(target="file")
     parser_model.add_argument('--data-path', dest='data_path', type=str, default=defaults.DATATMP,
                             help=('path+filename to data template(default: %s)' % (defaults.DATATMP)))
 
@@ -66,6 +72,10 @@ def process_args(args, defaults):
     parser_model.add_argument('--playlists', dest='playlists', metavar=defaults.PLAYLIST,
                               type=str2bool, required=True, default=defaults.PLAYLIST,
                               help=('include playlists as well (default: %s)' % (defaults.PLAYLIST)))
+
+    parser_model.add_argument('--clean-plate', dest='clean_plate',
+                                action='store_true', default=defaults.CLEAN_PLATE,
+                                help='Delete all past records in dataTemplate')
 
     parser_model.add_argument('--artists', dest='artists', metavar=defaults.ARTISTS,
                               type=str2bool, default=defaults.ARTISTS,
@@ -100,10 +110,10 @@ def process_args(args, defaults):
                                           help='run full program from the beginning till the end')
     run_parser.set_defaults(phase='run')
     
-    run_model.add_argument('-s', '--source', dest='source', required=True, choices=['vk', 'ym', 'sp'], type=str,
+    run_parser.add_argument('-s', '--source', dest='source', required=True, choices=['vk', 'ym', 'sp'], type=str,
                             help='service_name to fetch music from')
     
-    run_model.add_argument('-t', '--target', required=True, dest='target', choices=[
+    run_parser.add_argument('-t', '--target', required=True, dest='target', choices=[
                                "ym", "sp"], type=str, help='service_name to export music to')
 
 
@@ -136,8 +146,12 @@ def main(args=None):
     print(parameters, type(parameters))
     data_path = parameters.data_path
 
+    # Проверяем существует ли дата файл и наличие содержимого
+    # Таким образом пресекаем импорт до первого экспорта
     try:
         with open(data_path) as f:
+            if parameters.clean_plate:
+                clear_template(data_path)
             data = json.load(f)
     except FileNotFoundError as e:
         print('we got: ', e.__class__)
@@ -147,21 +161,26 @@ def main(args=None):
             return 'you have nothing to import yet'
         else:
             return 'make sure file_path is correct'
-
-
-
+    
 
     if parameters.phase == 'export' or parameters.phase == 'run':
         if parameters.source == "vk":
             vkaudio = VK.get_auth(login=parameters.vk_login,
-                                  password=parameters.vk_pass, data, parameters.playlists_l)
+                                  password=parameters.vk_pass)
+
+            # Сразу вызываем экспорт плейлиста, так как вк кал и больше ничего нельзя
+            selectExport(imModel=vkaudio, imPhase=parameters.phase,
+                        parameters=parameters, imSource=parameters.source, datafile=data)
+        
         elif parameters.source == 'ym':
             imModel = YandexMusic(
                 parameters.ym_login, parameters.ym_pass, data, playlists_l=parameters.playlists_l)
+            selectExport(imModel, imPhase=parameters.phase, parameters=parameters)
+
         elif parameters.source == 'sp':
             imModel = Spotify(parameters.sp_username,
                                 parameters.scope, data)
-        selectExport(imModel, imPhase=parameters.phase)
+            selectExport(imModel, imPhase=parameters.phase, parameters=parameters)
 
     elif parameters.phase == 'import':
         if parameters.target == "ym":
@@ -170,12 +189,11 @@ def main(args=None):
                                   playlists_l=parameters.playlists_l)
         else:
             imModel = Spotify(parameters.sp_username, parameters.scope, data, source=parameters.source)
-        selectImport(imModel, imPhase=parameters.phase,
-                    imSource=parameters.source, imTarget=parameters.target)
+        selectImport(imModel, parameters)
 
 
-
-def selectImport(imModel):
+# Импорт данных с учетом конфига/командных аргументов
+def selectImport(imModel, parameters):
     if parameters.playlists:
         imModel.import_playlists()
     if parameters.alltracks:
@@ -187,34 +205,56 @@ def selectImport(imModel):
     return "SELECT IMPORT SUCCEDED"
 
 
-def selectExport(imModel, imSource, imPhase):
+# Экспорт данных с учетом конфига/командных аргументов
+# Фазы экспорта и полного пробега начинаются в одной точке
+# При экспорте данные просто пишутся в файл
+# При выполнении всей программы (run) последовательно выполняется сначала экспорт из выбранной платформы,
+# сразу за ним вызывается импорт на целевую платформу (selectImport)
+# В качестве выхода - строка результат выполнения
+# imModel - с API какого сервиса работаем в данный момент [vk,sp,ym]
+# imSource - Откуда берем музыку ---> записывается в файл
+# imPhase - Какую часть кода выполнять:
+#                                   [export - получаение данных и запись,
+#                                   import - чтение данных их применение,
+#                                   run - получение => применение]
+
+def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
     if parameters.playlists:
-        imModel.export_playlists()
+        if imSource == 'vk':
+            data = VK.export_playlists(imModel, datafile, parameters.playlists_l)
+        else:
+            imModel.export_playlists()
     if parameters.alltracks:
         if imSource == 'vk':
-            print('vk alltracks export unavailable')
-            pass
-        imModel.export_alltracks()
+            return 'vk alltracks export unavailable'
+        else:
+            imModel.export_alltracks()
     if parameters.artists:
         imModel.export_artists()
     if parameters.albums:
         imModel.export_albums()
-    
-    data = imModel.export_data
 
+
+    # извлекаем данные для всех, кроме вк. У него лишняя хромосома
+    if imSource != 'vk':
+        data = imModel.export_data
+
+
+    # Если задача экспорта - пишем в файл и останавливаемся
+    # В противном случае (run) сразу начинаем импорт
+    # на всякий случай возвращаем статус выполнения каждого шага
     if imPhase == 'export':
         with open('dataTemplate.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
             return "SELECT EXPORT SUCCEDED"
-
-    status = selectImport(imModel, imPhase=parameters.phase,
-                        imSource=parameters.source, imTarget=parameters.target)
-    if status is not None:
-        return "FULL RUN SUCCEDED"
     else:
-        return "ERROR WRONG ARGUMENTS"
+        status = selectImport(imModel, parameters)
+        if status is not None:
+            return "FULL RUN SUCCEDED"
+        else:
+            return "ERROR WRONG ARGUMENTS"
 
+logging.debug('END.')
 
-print('end')
 if __name__ == '__main__':
     main()

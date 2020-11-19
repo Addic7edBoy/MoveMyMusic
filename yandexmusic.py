@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import collections
-
 from yandex_music.client import Client
-
 from config import Default
 import json
 import logging
@@ -36,6 +34,8 @@ class YandexMusic(object):
         logging.debug(f"playlist '{playlist_title}' not found; created with id: '{playlist_new['kind']}'")
         return (playlist_new['kind'], playlist_new['revision'])
 
+
+
     # Поиск информации об исполнителе. Возвращает json файл: имя, ID, все альбомы, все треки
     def find_artist(self, artist):
         info_dict = collections.defaultdict(dict)
@@ -55,6 +55,8 @@ class YandexMusic(object):
         with open('moo.json', 'w', encoding='utf-8') as f:
             json.dump(info_dict, f, indent=4, ensure_ascii=False)
         return info_dict
+
+
 
     # main func for import
     def insert_yandex(self):
@@ -107,7 +109,7 @@ class YandexMusic(object):
                             album_id = artist_info['artist_tracks'][str(song)][2]
                             print(track_id)
                         except KeyError:
-                            logging.warning(f"SEARCH FAILED '{track[0]} - {track[1]}'")
+                            logging.warning(f"SEARCH FAILED '{artist} - {song}'")
                             self.failed.append({
                                 'artist': artist,
                                 'song': song,
@@ -124,9 +126,11 @@ class YandexMusic(object):
                                                                     at=0,
                                                                     revision=rev)
                                 rev += 1
-                                logging.debug(f"'{track[-1][0]} - {track[-1][1]}' not in playlist; added")
+                                logging.debug(f"'{artist} - {song}' not in playlist; added")
         logging.debug('DONE')
         logging.debug(f"{len(self.failed)} couldnt be found, see more in 'failed.json'")
+
+
 
     def insert_all(self):
         with open(Default.VK_PATH + 'tracks_all.json') as f:
@@ -194,6 +198,8 @@ class YandexMusic(object):
         logging.debug('DONE')
         logging.debug(f"{len(self.failed)} couldnt be found, see more in 'failed.json'")
 
+
+
     def export_artists(self):
     # export liked artists list, skip if 'False'
         liked_artists = self.client.users_likes_artists()
@@ -202,7 +208,9 @@ class YandexMusic(object):
             artist_id = like.artist.id
             artist_name = like.artist.name
             self.export_data["YM"]["artists"].append(artist_name)
-    
+
+
+
     def export_albums(self):
         # export liked albums of certain artist(manually defined or ALL), skip if list is empty
         logging.debug('START export albums')
@@ -220,6 +228,8 @@ class YandexMusic(object):
             self.export_data['YM']['albums'].append({"title": album_title, "artist": artist_name, "tracks_count": track_count})
             logging.debug(f"DONE export album '{like.album.title}'")
 
+
+
     # export your playlists (manually defined or favorites), skip if list is empty
     def export_alltracks(self):
         logging.debug('START export alltracks')
@@ -233,7 +243,9 @@ class YandexMusic(object):
             self.export_data["YM"]["alltracks"].append([artist_name, track_title])
             logging.debug(f"{artist_name} - {track_title} OK")
         logging.debug(f"DONE export playlist 'My favorites' TOTAL: {track_count}")
-    
+
+
+
     def export_playlists(self):
         my_playlists = {playlist.title: playlist.kind for playlist in self.client.users_playlists_list() if playlist}
         logging.debug('my playlists: {}'.format([item for item in my_playlists.keys()]))
