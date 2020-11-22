@@ -48,7 +48,7 @@ class Spotify(object):
         playlists = self.sp.user_playlists(self.username)
         logging.debug(f"START export onwned playlists")
         for playlist in playlists['items']:
-            if playlist['owner']['id'] == self.username.lower():    # ONLY OWNED BY USE
+            if playlist['owner']['id'] == self.username.lower():    # ONLY OWNED BY USER
                 logging.debug(f"START export playlists '{playlist['name']}'")
                 self.export_data["SP"]["playlists"][playlist['name']] = []
                 results = self.sp.playlist(

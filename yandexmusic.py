@@ -57,11 +57,42 @@ class YandexMusic(object):
         return info_dict
 
 
+    def import_albums(self):
+        import_albums = self.export_data[self.source.upper()]["albums"]
+        for item in import_albums:
+            album_title = item["title"]
+            artist_name = item["artist"]
+            album_count = item["tracks_count"]
+            try:
+                results = self.client.search(
+                    q='album:' + album_title + ' ' + 'artist:' + artist_name, type='album')
+                search_artist = results['albums']['items'][0]['artists'][0]['name']
+                # artist_uri = results['albums']['items'][0]['artists'][0]['uri']
+                search_title = results['albums']['items'][0]['name']
+                search_uri = results['albums']['items'][0]['uri']
+                search_tracks = results['albums']['items'][0]['total_tracks']
+            except IndexError:
+                logging.error(
+                    f"COUDNT FIND ALBUM '{album_title}-{artist_name}' ON SPOTIFY")
+                continue
+
+            # Verification
+            # сравниваем тайтл, имя артиста и количество песен в альбоме (source vs target)
+            if search_title.casefold() == album_title.casefold() and search_artist.casefold() == artist_name.casefold() and int(album_count) == int(search_tracks):
+                logging.debug(f"Album '{album_title}-{artist_name}' OK")
+                # add album if not already added
+                self.sp.current_user_saved_albums_add(albums=[search_uri])
+                logging.debug(
+                    f"DONE album '{album_title}-{artist_name}' added")
+    def import_artists(self):
+        pass
+    def import_playlists(self):
+        pass
+    def import_alltracks(self):
+        pass
 
     # main func for import
     def insert_yandex(self):
-        with open(Default.VK_PATH + 'tracks_album.json') as f:
-            tracks_album = json.load(f)
 
         for album in tracks_album.keys():
             if len(tracks_album[album].keys()) == 1:
@@ -264,7 +295,7 @@ class YandexMusic(object):
             logging.debug(f"START export playlist '{item}'")
             for like in playlist:
                 if 'podcast' in like.track.type:
-                    logging.debug(f"SKIP track with type: '{like.track.type}'")
+                    logging.warning(f"SKIP track with type: '{like.track.type}'")
                     continue
                 track_title = like.track.title
                 artist_name = like.track.artists[0].name

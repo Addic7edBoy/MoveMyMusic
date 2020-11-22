@@ -90,11 +90,10 @@ def process_args(args, defaults):
     parser_model.add_argument('--data-path', dest='data_path', type=str, default=defaults.DATATMP,
                             help=('path+filename to data template(default: %s)' % (defaults.DATATMP)))
 
-
     parser_model.set_defaults(data_path=defaults.DATATMP)
 
     parser_model.add_argument('--playlists', dest='playlists', metavar=defaults.PLAYLIST,
-                              type=str2bool, required=True, default=defaults.PLAYLIST,
+                              type=str2bool, default=defaults.PLAYLIST,
                               help=('include playlists as well (default: %s)' % (defaults.PLAYLIST)))
 
     parser_model.add_argument('--clean-plate', dest='clean_plate',
@@ -145,6 +144,9 @@ def process_args(args, defaults):
     import_parser = subparsers.add_parser('import', parents=[parser_base, parser_model],
                                           help='import music from json file')
     import_parser.set_defaults(phase='import')
+
+    run_parser.add_argument('source', choices=['vk', 'ym', 'sp'], type=str,
+                            help='service_name to fetch music from')
     
     import_parser.add_argument('target', choices=['ym', 'sp'], type=str,
                                help='service_name to import music to')
@@ -175,7 +177,11 @@ def main(args=None):
     try:
         with open(data_path) as f:
             if parameters.clean_plate:
-                clear_template(data_path)
+                if parameters.phase != 'import':
+                    logging.warning(f"'clean-plate' flag is up. Reseting data file")
+                    clear_template(data_path)
+                else:
+                    logging.error(f"'clean-plate' flag is up, but was ignored due to 'import' phase")
             data = json.load(f)
     except FileNotFoundError as e:
         print('we got: ', e.__class__)
@@ -218,7 +224,7 @@ def main(args=None):
 
 # Импорт данных с учетом конфига/командных аргументов
 def selectImport(imModel, parameters):
-    if parameters.playlists:
+    if parameters.playlists or parameters.playlists_l:
         imModel.import_playlists()
     if parameters.alltracks:
         imModel.import_alltracks()
@@ -243,7 +249,7 @@ def selectImport(imModel, parameters):
 #                                   run - получение => применение]
 
 def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
-    if parameters.playlists:
+    if parameters.playlists or parameters.playlists_l:
         if imSource == 'vk':
             data = VK.export_playlists(imModel, datafile, parameters.playlists_l)
         else:
@@ -279,7 +285,6 @@ def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
         else:
             return "ERROR WRONG ARGUMENTS"
 
-logging.debug('END.')
 
 if __name__ == '__main__':
     main()

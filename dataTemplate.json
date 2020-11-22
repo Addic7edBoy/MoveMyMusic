@@ -1,20 +1,217 @@
 {
-  "YM": {
-    "artists": [],
-    "albums": [],
-    "playlists": {},
-    "alltracks": []
-  },
-  "SP": {
-    "artists": [],
-    "albums": [],
-    "playlists": {},
-    "alltracks": []
-  },
-  "VK": {
-    "artists": [],
-    "albums": [],
-    "playlists": [],
-    "alltracks": []
-  }
+    "YM": {
+        "artists": [],
+        "albums": [
+            {
+                "title": "Song Machine, Season One: Strange Timez",
+                "artist": "Gorillaz",
+                "tracks_count": 17
+            },
+            {
+                "title": "Любовь, аддикция и марафоны",
+                "artist": "Три дня дождя",
+                "tracks_count": 11
+            },
+            {
+                "title": "Цирк восходящего солнца",
+                "artist": "playingtheangel",
+                "tracks_count": 15
+            },
+            {
+                "title": "Trench",
+                "artist": "twenty one pilots",
+                "tracks_count": 14
+            },
+            {
+                "title": "Маленькая роща деревьев дикой вишни",
+                "artist": "нехудожник.",
+                "tracks_count": 9
+            },
+            {
+                "title": "Great Depression",
+                "artist": "Markul",
+                "tracks_count": 9
+            },
+            {
+                "title": "Formula",
+                "artist": "Rickey F",
+                "tracks_count": 8
+            }
+        ],
+        "playlists": {
+            "pie": [
+                [
+                    "Younger Hunger",
+                    "Dead Inside"
+                ],
+                [
+                    "I DONT KNOW HOW BUT THEY FOUND ME",
+                    "Do It All The Time"
+                ],
+                [
+                    "Younger Hunger",
+                    "Goodbye Bye Bye"
+                ],
+                [
+                    "Call Me Karizma",
+                    "Quarantine With Me"
+                ],
+                [
+                    "UPSAHL",
+                    "Drugs"
+                ],
+                [
+                    "Gabriel Black",
+                    "fuck up"
+                ],
+                [
+                    "Joji",
+                    "NO FUN"
+                ],
+                [
+                    "Joji",
+                    "CAN'T GET OVER YOU"
+                ],
+                [
+                    "Mujuice",
+                    "Химия"
+                ],
+                [
+                    "Call Me Karizma",
+                    "Rebels"
+                ],
+                [
+                    "Tessa Violet",
+                    "Crush"
+                ],
+                [
+                    "Bülow",
+                    "SAD AND BORED"
+                ],
+                [
+                    "Вишневский",
+                    "Ацетилсалициловая кислота"
+                ],
+                [
+                    "Вокруг фонарного столба",
+                    "Разговоры с самим собой"
+                ],
+                [
+                    "Adam jensen",
+                    "I'm a Sucker for a Liar in a Red Dress"
+                ],
+                [
+                    "вагоновожатые",
+                    "Ѫи┼ь"
+                ],
+                [
+                    "Never Get Used To People",
+                    "Ненавижу море"
+                ],
+                [
+                    "New Medicine",
+                    "Fire Up The Night"
+                ],
+                [
+                    "lowlife",
+                    "первое правило"
+                ]
+            ],
+            "H8": [
+                [
+                    "STED.D",
+                    "Против"
+                ],
+                [
+                    "STED.D",
+                    "Хой"
+                ],
+                [
+                    "Пикчи!",
+                    "Я поджигаю свой дом"
+                ],
+                [
+                    "Katanacss",
+                    "Молодым и пьяным"
+                ],
+                [
+                    "Loqiemean",
+                    "ВВВ"
+                ],
+                [
+                    "МОЛОДОСТЬ ВНУТРИ",
+                    "Один дома"
+                ],
+                [
+                    "STED.D",
+                    "Моргни, если ты в заложниках"
+                ],
+                [
+                    "playingtheangel",
+                    "Пропорция уязвимости"
+                ],
+                [
+                    "Феху",
+                    "Не обижу"
+                ],
+                [
+                    "saypink!",
+                    "Молодость со мной"
+                ],
+                [
+                    "playingtheangel",
+                    "В неожиданном ракурсе"
+                ],
+                [
+                    "Asper X",
+                    "Локус генома"
+                ],
+                [
+                    "playingtheangel",
+                    "Химия"
+                ],
+                [
+                    "Loqiemean",
+                    "Китобой"
+                ],
+                [
+                    "Aikko",
+                    "Купи мою боль"
+                ],
+                [
+                    "playingtheangel",
+                    "Бракованная дрянь"
+                ],
+                [
+                    "Aikko",
+                    "Чёрное сердце"
+                ],
+                [
+                    "Oxxxymiron",
+                    "Горсвет"
+                ],
+                [
+                    "Loqiemean",
+                    "Лирический Герой"
+                ],
+                [
+                    "Call Me Karizma",
+                    "Monster (Under My Bed)"
+                ]
+            ]
+        },
+        "alltracks": []
+    },
+    "SP": {
+        "artists": [],
+        "albums": [],
+        "playlists": {},
+        "alltracks": []
+    },
+    "VK": {
+        "artists": [],
+        "albums": [],
+        "playlists": [],
+        "alltracks": []
+    }
 }
