@@ -64,32 +64,64 @@ class YandexMusic(object):
             artist_name = item["artist"]
             album_count = item["tracks_count"]
             try:
-                results = self.client.search(
-                    q='album:' + album_title + ' ' + 'artist:' + artist_name, type='album')
-                search_artist = results['albums']['items'][0]['artists'][0]['name']
-                # artist_uri = results['albums']['items'][0]['artists'][0]['uri']
-                search_title = results['albums']['items'][0]['name']
-                search_uri = results['albums']['items'][0]['uri']
-                search_tracks = results['albums']['items'][0]['total_tracks']
+                results = self.client.search(text=album_title + ' ' + artist_name, nocorrect=True, type='album').albums.results[0]
+                search_title = results.title
+                search_artist = results.artists[0]
+                search_count = results.track_count
             except IndexError:
                 logging.error(
-                    f"COUDNT FIND ALBUM '{album_title}-{artist_name}' ON SPOTIFY")
+                    f"COUDNT FIND ALBUM '{album_title}-{artist_name}' ON YANDEX MUSIC")
                 continue
-
-            # Verification
-            # сравниваем тайтл, имя артиста и количество песен в альбоме (source vs target)
-            if search_title.casefold() == album_title.casefold() and search_artist.casefold() == artist_name.casefold() and int(album_count) == int(search_tracks):
+            if search_title.casefold() == album_title.casefold() and search_artist.casefold() == artist_name.casefold() and int(album_count) == int(search_count):
                 logging.debug(f"Album '{album_title}-{artist_name}' OK")
+                album_id = results.id
                 # add album if not already added
-                self.sp.current_user_saved_albums_add(albums=[search_uri])
+                self.client.users_likes_albums_add(album_ids=album_id)
                 logging.debug(
                     f"DONE album '{album_title}-{artist_name}' added")
+
     def import_artists(self):
-        pass
+        artists = self.export_data[self.source.upper()]["artists"]
+        for artist in artists:
+            logging.debug(f"START search artist '{artist}'")
+            try:
+                results = self.client.search(text=artist, type='artist', nocorrect=True).artists[0]
+                search_artist = results.name # for verification in future
+                artist_id = results.id
+                self.client.users_likes_artists_add(artist_ids=artist_id)
+                logging.debug(f"{search_artist} ADDED OK")
+            except IndexError:
+                logging.error(
+                    f"COUDNT FIND ARTIST '{artist}' ON YANDEX MUSIC")
+                continue
+            
     def import_playlists(self):
         pass
     def import_alltracks(self):
-        pass
+        for track in tracks_all:
+            track_obj = self.client.search(
+                                        text=track[0] + ' - ' + track[1],
+                                        nocorrect=True,
+                                        type_='track',
+                                        page=0,
+                                        playlist_in_best=False)
+            try:
+                track_title = track_obj.tracks.results[0].title
+                track_id = track_obj.tracks.results[0].id
+                album_id = track_obj.tracks.results[0].albums[0].id
+                album_name = track_obj.tracks.results[0].albums[0].title
+                artist_name = track_obj.tracks.results[0].artists[0].name
+                track.append([artist_name, track_title, track_id, album_name, album_id])
+            except AttributeError:
+                if track_obj is None or track_obj.tracks is None:
+                    logging.warning(f"SEARCH FAILED '{track[0]} - {track[1]}'")
+                    self.failed.append({
+                        'artist': track[0],
+                        'song': track[1]
+                        })
+                else:
+                    raise AttributeError
+
 
     # main func for import
     def insert_yandex(self):
@@ -249,7 +281,7 @@ class YandexMusic(object):
         self.export_data["YM"]["albums"] = []
         for like in liked_albums:
             if like.album.type == 'podcast':
-                logging.debug(f"START export album '{like.album.title}',  {like.album.type}")
+                logging.warning(f"SKIP track with type: '{like.track.type}'")
                 continue
             logging.debug(f"START export album '{like.album.title}',  {like.album.type}")
             album_title = like.album.title
