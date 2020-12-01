@@ -4,6 +4,7 @@ from yandex_music.client import Client
 from config import Default
 import json
 import logging
+import requests
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -98,29 +99,52 @@ class YandexMusic(object):
     def import_playlists(self):
         pass
     def import_alltracks(self):
-        for track in tracks_all:
-            track_obj = self.client.search(
-                                        text=track[0] + ' - ' + track[1],
-                                        nocorrect=True,
-                                        type_='track',
-                                        page=0,
-                                        playlist_in_best=False)
-            try:
-                track_title = track_obj.tracks.results[0].title
-                track_id = track_obj.tracks.results[0].id
-                album_id = track_obj.tracks.results[0].albums[0].id
-                album_name = track_obj.tracks.results[0].albums[0].title
-                artist_name = track_obj.tracks.results[0].artists[0].name
-                track.append([artist_name, track_title, track_id, album_name, album_id])
-            except AttributeError:
-                if track_obj is None or track_obj.tracks is None:
-                    logging.warning(f"SEARCH FAILED '{track[0]} - {track[1]}'")
-                    self.failed.append({
-                        'artist': track[0],
-                        'song': track[1]
-                        })
-                else:
-                    raise AttributeError
+        alltracks = self.export_data[self.source.upper()]["alltracks"]
+        import_tracks = ''
+        url='https://music.yandex.ru/handlers/import.jsx'
+        for item in alltracks:
+            import_tracks += ' '.join(item) + '\n'
+        string_of_songs=import_tracks.replace(' ','+')
+        json_values={
+            'content':string_of_songs
+        }
+        r1_import=requests.post(url,json=json_values)
+        
+        # GET
+        id_import=json.loads(r1_import.text)['importCode']
+        url='https://music.yandex.ru/handlers/import.jsx'
+        params={
+            'code':id_import
+        }
+        r2_import=requests.get(url=url, params=params)
+        
+        
+        
+        
+        
+        # for track in tracks_all:
+        #     track_obj = self.client.search(
+        #                                 text=track[0] + ' - ' + track[1],
+        #                                 nocorrect=True,
+        #                                 type_='track',
+        #                                 page=0,
+        #                                 playlist_in_best=False)
+        #     try:
+        #         track_title = track_obj.tracks.results[0].title
+        #         track_id = track_obj.tracks.results[0].id
+        #         album_id = track_obj.tracks.results[0].albums[0].id
+        #         album_name = track_obj.tracks.results[0].albums[0].title
+        #         artist_name = track_obj.tracks.results[0].artists[0].name
+        #         track.append([artist_name, track_title, track_id, album_name, album_id])
+        #     except AttributeError:
+        #         if track_obj is None or track_obj.tracks is None:
+        #             logging.warning(f"SEARCH FAILED '{track[0]} - {track[1]}'")
+        #             self.failed.append({
+        #                 'artist': track[0],
+        #                 'song': track[1]
+        #                 })
+        #         else:
+        #             raise AttributeError
 
 
     # main func for import
@@ -193,46 +217,6 @@ class YandexMusic(object):
         logging.debug('DONE')
         logging.debug(f"{len(self.failed)} couldnt be found, see more in 'failed.json'")
 
-
-
-    def insert_all(self):
-        with open(Default.VK_PATH + 'tracks_all.json') as f:
-            tracks_all = json.load(f)
-
-            # Check if playlist already exists, create if not
-            # playlist_tulp = self.check_playlist('Все треки (VK)')
-            # if playlist_tulp is None:
-            #     playlist_new = self.client.users_playlists_create(title='Все треки (VK)')
-            #     playlist_id = playlist_new['kind']
-            #     rev = playlist_new['revision']
-            # else:
-            #     playlist_id, rev = playlist_tulp
-        playlist_id, rev = self.check_playlist('Все треки (VK)')
-
-        # Iter through tracks file and search for each
-        for track in tracks_all:
-            track_obj = self.client.search(
-                                        text=track[0] + ' - ' + track[1],
-                                        nocorrect=True,
-                                        type_='track',
-                                        page=0,
-                                        playlist_in_best=False)
-            try:
-                track_title = track_obj.tracks.results[0].title
-                track_id = track_obj.tracks.results[0].id
-                album_id = track_obj.tracks.results[0].albums[0].id
-                album_name = track_obj.tracks.results[0].albums[0].title
-                artist_name = track_obj.tracks.results[0].artists[0].name
-                track.append([artist_name, track_title, track_id, album_name, album_id])
-            except AttributeError:
-                if track_obj is None or track_obj.tracks is None:
-                    logging.warning(f"SEARCH FAILED '{track[0]} - {track[1]}'")
-                    self.failed.append({
-                        'artist': track[0],
-                        'song': track[1]
-                        })
-                else:
-                    raise AttributeError
 
         # Remove failed ones
         [tracks_all.remove([fail['artist'], fail['song']]) for fail in self.failed]
