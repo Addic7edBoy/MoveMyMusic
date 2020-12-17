@@ -47,12 +47,20 @@ params={
     'code':id_import
 }
 r2_import=requests.get(url=url, params=params)
-resp = json.loads(r2_import.text)['status']
+resp = json.loads(r2_import.text)
+print(resp)
 
 while True:
-    if resp ==
-
-
+    if resp['status'] == 'in-progress':
+        print(resp['status'])
+        time.sleep(2)
+        r2_import=requests.get(url=url, params=params)
+        resp = json.loads(r2_import.text)
+    elif resp['status'] == 'done':
+        print(resp['status'])
+        trackIds = resp['trackIds']
+        print(trackIds)
+        break
 # print(json.loads(r2_import.text))
 # time.sleep(2)
 # r2_import=requests.get(url=url, params=params)

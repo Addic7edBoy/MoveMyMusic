@@ -44,6 +44,7 @@ def repair_template(path):
 
 # clears data file from past records
 def clear_template(path=Default.DATATMP):
+    logging.debug('cleaning template')
     with open(path) as f:
         try:
             data = json.load(f)
@@ -145,7 +146,7 @@ def process_args(args, defaults):
                                           help='import music from json file')
     import_parser.set_defaults(phase='import')
 
-    run_parser.add_argument('source', choices=['vk', 'ym', 'sp'], type=str,
+    import_parser.add_argument('source', choices=['vk', 'ym', 'sp'], type=str,
                             help='service_name to fetch music from')
     
     import_parser.add_argument('target', choices=['ym', 'sp'], type=str,
@@ -279,6 +280,14 @@ def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
             json.dump(data, f, indent=4, ensure_ascii=False)
             return "SELECT EXPORT SUCCEDED"
     else:
+        with open('dataTemplate.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        if parameters.target == 'sp':
+            imModel = Spotify(parameters.sp_username,
+                    parameters.scope, data, source=parameters.source)
+        elif parameters.target == 'ym':
+            imModel = YandexMusic(
+                parameters.ym_login, parameters.ym_pass, data, playlists_l=parameters.playlists_l, source=parameters.source)
         status = selectImport(imModel, parameters)
         if status is not None:
             return "FULL RUN SUCCEDED"

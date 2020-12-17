@@ -5,6 +5,7 @@ from config import Default
 import json
 import logging
 import requests
+import time
 
 
 logging.basicConfig(level=logging.DEBUG,
@@ -31,7 +32,7 @@ class YandexMusic(object):
                 logging.debug(f'playlist "{playlist_title}" exists; its id: "{playlist["kind"]}"')
                 return (playlist['kind'], playlist['revision'])
 
-        playlist_new = self.client.users_playlists_create(title='Все треки (VK)')
+        playlist_new = self.client.users_playlists_create(title=playlist_title)
         logging.debug(f"playlist '{playlist_title}' not found; created with id: '{playlist_new['kind']}'")
         return (playlist_new['kind'], playlist_new['revision'])
 
@@ -64,8 +65,12 @@ class YandexMusic(object):
             album_title = item["title"]
             artist_name = item["artist"]
             album_count = item["tracks_count"]
+            logging.debug(f"{type(album_title)}, {type(artist_name)}")
             try:
-                results = self.client.search(text=album_title + ' ' + artist_name, nocorrect=True, type='album').albums.results[0]
+                search_text = album_title + ' ' + artist_name
+                logging.debug(type(search_text))
+                results = self.client.search(text=search_text, nocorrect=True, type_='all') ###!!!!!!!!!!!SLOMALOS'
+                print(results)
                 search_title = results.title
                 search_artist = results.artists[0]
                 search_count = results.track_count
@@ -86,8 +91,9 @@ class YandexMusic(object):
         for artist in artists:
             logging.debug(f"START search artist '{artist}'")
             try:
-                results = self.client.search(text=artist, type='artist', nocorrect=True).artists[0]
+                results = self.client.search(text=artist, type_='artist', nocorrect=True).artists[0]
                 search_artist = results.name # for verification in future
+                logging.debug(f"found search_artist {search_artist}")
                 artist_id = results.id
                 self.client.users_likes_artists_add(artist_ids=artist_id)
                 logging.debug(f"{search_artist} ADDED OK")
@@ -97,7 +103,45 @@ class YandexMusic(object):
                 continue
             
     def import_playlists(self):
-        pass
+        import_tracks = ''
+        url='https://music.yandex.ru/handlers/import.jsx'
+        playlists = self.export_data[self.source.upper()]["playlists"]
+        for title, tracks in playlists.items():
+            playlist_id, playlist_rev = self.check_playlist(title)
+            for item in tracks:
+                import_tracks += ' '.join(item) + '\n'
+            string_of_songs=import_tracks.replace(' ','+')
+            json_values={
+                'content':string_of_songs
+            }
+            r1_import=requests.post(url,json=json_values)
+            
+            # GET
+            id_import=json.loads(r1_import.text)['importCode']
+            params={
+                'code':id_import
+            }
+            resp=requests.get(url=url, params=params)
+            resp = json.loads(resp.text)
+            logging.debug(f"{resp['status']}")
+
+            while True:
+                if resp['status'] == 'in-progress':
+                    logging.debug(f"{resp['status']}")
+                    time.sleep(2)
+                    r2_import=requests.get(url=url, params=params)
+                    resp = json.loads(r2_import.text)
+                elif resp['status'] == 'done':
+                    logging.debug(f"{resp['status']}")
+                    trackIds = resp['trackIds']
+                    print(trackIds)
+                    break
+            
+            for trackId in trackIds:
+                self.client.users_playlists_insert_track(playlist_id, trackId.split(':')[0], trackId.split(':')[1], revision=playlist_rev)
+                playlist_rev += 1
+
+
     def import_alltracks(self):
         alltracks = self.export_data[self.source.upper()]["alltracks"]
         import_tracks = ''
@@ -116,134 +160,27 @@ class YandexMusic(object):
         params={
             'code':id_import
         }
-        r2_import=requests.get(url=url, params=params)
-        
-        
-        
-        
-        
-        # for track in tracks_all:
-        #     track_obj = self.client.search(
-        #                                 text=track[0] + ' - ' + track[1],
-        #                                 nocorrect=True,
-        #                                 type_='track',
-        #                                 page=0,
-        #                                 playlist_in_best=False)
-        #     try:
-        #         track_title = track_obj.tracks.results[0].title
-        #         track_id = track_obj.tracks.results[0].id
-        #         album_id = track_obj.tracks.results[0].albums[0].id
-        #         album_name = track_obj.tracks.results[0].albums[0].title
-        #         artist_name = track_obj.tracks.results[0].artists[0].name
-        #         track.append([artist_name, track_title, track_id, album_name, album_id])
-        #     except AttributeError:
-        #         if track_obj is None or track_obj.tracks is None:
-        #             logging.warning(f"SEARCH FAILED '{track[0]} - {track[1]}'")
-        #             self.failed.append({
-        #                 'artist': track[0],
-        #                 'song': track[1]
-        #                 })
-        #         else:
-        #             raise AttributeError
+        resp=requests.get(url=url, params=params)
+        resp = json.loads(resp.text)
+        logging.debug(f"{resp['status']}")
 
-
-    # main func for import
-    def insert_yandex(self):
-
-        for album in tracks_album.keys():
-            if len(tracks_album[album].keys()) == 1:
-                print('may be an album of curtain author')
-                artist = [x for x in tracks_album[album].keys()][0]
-                artist_info = self.find_artist(artist)
-
-                if album in artist_info['artist_albums'].keys():
-                    print('titles ok')
-                    if len(tracks_album[album][artist].keys()) == artist_info['artist_albums'][album]['track_count']:
-                        print('track count ok')
-                        trigger = True
-                        for export_key, export_val in tracks_album[album][artist].items():
-                            if artist_info['artist_tracks'][export_val][1] == album:
-                                print('track passed')
-                                pass
-                            else:
-                                trigger = False
-                                print('not same album')
-                                break
-
-                        if trigger:
-                            print('full album: ', album)
-                            album_id = artist_info['artist_albums'][album]['album_id']
-                            self.client.users_likes_albums_add(album_ids=album_id)
-
-            else:
-                print('\n\nnot direct album, checking if playlist already created\n\n')
-                # playlist_tulp = self.check_playlist(album + ' (from VK)')
-                # if playlist_tulp is None:
-                #     n_playlist = self.client.users_playlists_create(title=album + ' (from VK)')
-                #     playlist_id = n_playlist['kind']
-                #     rev = n_playlist['revision']
-                #     print('\n\nMy new playlist id and revision: ', playlist_id, rev)
-                # else:
-                #     playlist_id, rev = playlist_tulp
-                #     print('\n\nMy new playlist id and revision: ', playlist_id, rev)
-                playlist_id, rev = self.check_playlist(album + ' (VK)')
-
-                for artist, songs in tracks_album[album].items():
-                    artist_info = self.find_artist(artist)
-                    for song in songs.values():
-                        try:
-                            track_id = artist_info['artist_tracks'][str(song)][0]
-                            album_id = artist_info['artist_tracks'][str(song)][2]
-                            print(track_id)
-                        except KeyError:
-                            logging.warning(f"SEARCH FAILED '{artist} - {song}'")
-                            self.failed.append({
-                                'artist': artist,
-                                'song': song,
-                                'available song': [artist_info['artist_tracks'].keys()]
-                                })
-                        else:
-                            if int(track_id) in [x.id for x in self.client.users_playlists(playlist_id)[0].tracks]:
-                                continue
-                            else:
-                                self.client.users_playlists_insert_track(
-                                                                    kind=playlist_id,
-                                                                    track_id=track_id,
-                                                                    album_id=album_id,
-                                                                    at=0,
-                                                                    revision=rev)
-                                rev += 1
-                                logging.debug(f"'{artist} - {song}' not in playlist; added")
-        logging.debug('DONE')
-        logging.debug(f"{len(self.failed)} couldnt be found, see more in 'failed.json'")
-
-
-        # Remove failed ones
-        [tracks_all.remove([fail['artist'], fail['song']]) for fail in self.failed]
-
-        with open('tracks_all2.json', 'w', encoding='utf-8') as f:
-            json.dump(tracks_all, f, indent=4, ensure_ascii=False)
-        with open('failed.json', 'w', encoding='utf-8') as f:
-            json.dump(self.failed, f, indent=4, ensure_ascii=False)
-
-        # Add track to created playlist
-        for track in tracks_all:
-            track_id = track[-1][2]
-            album_id = track[-1][-1]
-            if int(track_id) in [x.id for x in self.client.users_playlists(playlist_id)[0].tracks]:
-                logging.debug(f"'{track[-1][0]} - {track[-1][1]}' already in playlist")
-                continue
-            else:
-                self.client.users_playlists_insert_track(
-                                                    kind=playlist_id,
-                                                    track_id=track_id,
-                                                    album_id=album_id,
-                                                    at=0,
-                                                    revision=rev)
-                rev += 1
-                logging.debug(f"'{track[-1][0]} - {track[-1][1]}' not in playlist; added")
-        logging.debug('DONE')
-        logging.debug(f"{len(self.failed)} couldnt be found, see more in 'failed.json'")
+        while True:
+            if resp['status'] == 'in-progress':
+                logging.debug(f"{resp['status']}")
+                time.sleep(2)
+                r2_import=requests.get(url=url, params=params)
+                resp = json.loads(r2_import.text)
+            elif resp['status'] == 'done':
+                logging.debug(f"{resp['status']}")
+                trackIds = resp['trackIds']
+                print(trackIds)
+                break
+        playlist_id, playlist_rev = self.check_playlist(f'Все треки ({self.source})')
+        logging.debug(f"added 'Все треки ({self.source})'")
+        for trackId in trackIds:
+            self.client.users_playlists_insert_track(playlist_id, trackId.split(':')[0], trackId.split(':')[1], revision=playlist_rev)
+            playlist_rev += 1
+        # self.client.users_likes_tracks_add(track_ids=trackIds)
 
 
 

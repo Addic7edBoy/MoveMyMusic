@@ -63,7 +63,7 @@
             "request": "launch",
             "module": "MoveMyMusic",
             "console": "externalTerminal",
-            "args": ["export", "ym", "--playlists", "True",
+            "args": ["export", "sp", "--playlists", "True",
                     "--alltracks", "True", "--artists", "True",
                     "--albums",  "True","--clean-plate"]
         },
