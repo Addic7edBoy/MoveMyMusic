@@ -23,7 +23,7 @@ class YandexMusic(object):
         self.source = source
 
 
-    # Проверяем существует ли нужный плейлист. Нет - создаем с нужным тайтлом и возвращаем ID, Да - просто возвращаем ID  
+    # Проверяем существует ли нужный плейлист. Нет - создаем с нужным тайтлом и возвращаем ID, Да - просто возвращаем ID
     def check_playlist(self, playlist_title):
         logging.debug(f"Checking if playlist '{playlist_title}' exists")
         my_playlists = self.client.users_playlists_list()
@@ -58,7 +58,7 @@ class YandexMusic(object):
             json.dump(info_dict, f, indent=4, ensure_ascii=False)
         return info_dict
 
-
+    # !!!! НЕ РАБОТАЕТ ИЗ-ЗА БАГА API
     def import_albums(self):
         import_albums = self.export_data[self.source.upper()]["albums"]
         for item in import_albums:
@@ -69,7 +69,8 @@ class YandexMusic(object):
             try:
                 search_text = album_title + ' ' + artist_name
                 logging.debug(type(search_text))
-                results = self.client.search(text=search_text, nocorrect=True, type_='all') ###!!!!!!!!!!!SLOMALOS'
+                results = self.client.search(text='search_text', nocorrect=True, type_='album')['albums']['results'][0]
+                # results = self.client.search(text=search_text, nocorrect=True, type_='all') ###!!!!!!!!!!!SLOMALOS'
                 print(results)
                 search_title = results.title
                 search_artist = results.artists[0]
@@ -86,12 +87,15 @@ class YandexMusic(object):
                 logging.debug(
                     f"DONE album '{album_title}-{artist_name}' added")
 
+    # !!!! НЕ РАБОТАЕТ ИЗ-ЗА БАГА API
     def import_artists(self):
         artists = self.export_data[self.source.upper()]["artists"]
+        # tesss = self.find_artist("Marilyn Manson")
+        # print(tesss)
         for artist in artists:
             logging.debug(f"START search artist '{artist}'")
             try:
-                results = self.client.search(text=artist, type_='artist', nocorrect=True).artists[0]
+                results = self.client.search(text=artist, type_='artist', nocorrect=False)['artists']['results'][0]
                 search_artist = results.name # for verification in future
                 logging.debug(f"found search_artist {search_artist}")
                 artist_id = results.id
@@ -101,7 +105,7 @@ class YandexMusic(object):
                 logging.error(
                     f"COUDNT FIND ARTIST '{artist}' ON YANDEX MUSIC")
                 continue
-            
+
     def import_playlists(self):
         import_tracks = ''
         url='https://music.yandex.ru/handlers/import.jsx'
@@ -115,7 +119,7 @@ class YandexMusic(object):
                 'content':string_of_songs
             }
             r1_import=requests.post(url,json=json_values)
-            
+
             # GET
             id_import=json.loads(r1_import.text)['importCode']
             params={
@@ -136,7 +140,7 @@ class YandexMusic(object):
                     trackIds = resp['trackIds']
                     print(trackIds)
                     break
-            
+
             for trackId in trackIds:
                 self.client.users_playlists_insert_track(playlist_id, trackId.split(':')[0], trackId.split(':')[1], revision=playlist_rev)
                 playlist_rev += 1
@@ -153,7 +157,7 @@ class YandexMusic(object):
             'content':string_of_songs
         }
         r1_import=requests.post(url,json=json_values)
-        
+
         # GET
         id_import=json.loads(r1_import.text)['importCode']
         url='https://music.yandex.ru/handlers/import.jsx'
@@ -175,8 +179,8 @@ class YandexMusic(object):
                 trackIds = resp['trackIds']
                 print(trackIds)
                 break
-        playlist_id, playlist_rev = self.check_playlist(f'Все треки ({self.source})')
-        logging.debug(f"added 'Все треки ({self.source})'")
+        playlist_id, playlist_rev = self.check_playlist(f'Все треки ({self.source.upper()})')
+        logging.debug(f"added 'Все треки ({self.source.upper()})'")
         for trackId in trackIds:
             self.client.users_playlists_insert_track(playlist_id, trackId.split(':')[0], trackId.split(':')[1], revision=playlist_rev)
             playlist_rev += 1
@@ -202,9 +206,9 @@ class YandexMusic(object):
         self.export_data["YM"]["albums"] = []
         for like in liked_albums:
             if like.album.type == 'podcast':
-                logging.warning(f"SKIP track with type: '{like.track.type}'")
+                logging.warning(f"SKIP track with type: '{like.album.type}'")
                 continue
-            logging.debug(f"START export album '{like.album.title}',  {like.album.type}")
+            logging.debug(f"START export album '{like.album.title}'")
             album_title = like.album.title
             artist_name = like.album.artists[0].name
             track_count = like.album.track_count
@@ -256,3 +260,4 @@ class YandexMusic(object):
                 self.export_data["YM"]["playlists"][item].append([artist_name, track_title])
                 logging.debug(f"{artist_name} - {track_title} OK")
             logging.debug(f"DONE export playlist '{item}'")
+

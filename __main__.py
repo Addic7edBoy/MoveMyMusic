@@ -39,7 +39,7 @@ def repair_template(path):
         logging.debug('example template successfully copied')
         return
         # os.rename(str(path)+'.example', path)
-    
+
 
 
 # clears data file from past records
@@ -50,6 +50,7 @@ def clear_template(path=Default.DATATMP):
             data = json.load(f)
         except json.decoder.JSONDecodeError as jex:
             logging.error(f"Invalid JSON response, dropping to original template \n If the problem persists, check connection to desired service")
+            logging.error(jex)
             repair_template(path)
             return
         for i in data:
@@ -65,11 +66,11 @@ def process_args(args, defaults):
 
     parser = argparse.ArgumentParser()
     # parser.prog = 'moveMyMusic'
-    
+
     subparsers = parser.add_subparsers(title='subcommands',
                                        description='valid subcommands',
                                        help='description')
-    
+
     parser_base = argparse.ArgumentParser(add_help=False)
 
     parser_base.set_defaults(scope=defaults.SCOPE)  # область необходимых разрешений для работы со spotify API
@@ -85,7 +86,7 @@ def process_args(args, defaults):
                              help=('log file path (default: %s)'
                                    % (defaults.LOG_PATH)))
 
-    
+
     # ОБЩИЕ аргументы
     parser_model = argparse.ArgumentParser(add_help=False)
     parser_model.add_argument('--data-path', dest='data_path', type=str, default=defaults.DATATMP,
@@ -133,32 +134,12 @@ def process_args(args, defaults):
     run_parser = subparsers.add_parser('run', parents=[parser_base, parser_model],
                                           help='run full program from the beginning till the end')
     run_parser.set_defaults(phase='run')
-    
+
     run_parser.add_argument('-s', '--source', dest='source', required=True, choices=['vk', 'ym', 'sp'], type=str,
                             help='service_name to fetch music from')
-    
+
     run_parser.add_argument('-t', '--target', required=True, dest='target', choices=[
                                "ym", "sp"], type=str, help='service_name to export music to')
-
-
-    # Аргументы для ИМПОРТА данных из файла
-    import_parser = subparsers.add_parser('import', parents=[parser_base, parser_model],
-                                          help='import music from json file')
-    import_parser.set_defaults(phase='import')
-
-    import_parser.add_argument('source', choices=['vk', 'ym', 'sp'], type=str,
-                            help='service_name to fetch music from')
-    
-    import_parser.add_argument('target', choices=['ym', 'sp'], type=str,
-                               help='service_name to import music to')
-        
-    
-    #ТЕСТЫ
-    test_parser = subparsers.add_parser('tests', parents=[parser_base],
-                                        help='import music from json file')
-    test_parser.set_defaults(phase='tests')
-
-
 
     parameters = parser.parse_args(args)
     return parameters
@@ -168,9 +149,7 @@ def main(args=None):
 
     if args is None:
         args = sys.argv[1:]
-    print(args)
     parameters = process_args(args, Default)
-    print(parameters, type(parameters))
     data_path = parameters.data_path
 
     # Проверяем существует ли дата файл и наличие содержимого
@@ -192,7 +171,7 @@ def main(args=None):
             return 'you have nothing to import yet'
         else:
             return 'make sure file_path is correct'
-    
+
 
     if parameters.phase == 'export' or parameters.phase == 'run':
         if parameters.source == "vk":
@@ -202,7 +181,7 @@ def main(args=None):
             # Сразу вызываем экспорт плейлиста, так как вк кал и больше ничего нельзя
             selectExport(imModel=vkaudio, imPhase=parameters.phase,
                         parameters=parameters, imSource=parameters.source, datafile=data)
-        
+
         elif parameters.source == 'ym':
             imModel = YandexMusic(
                 parameters.ym_login, parameters.ym_pass, data, playlists_l=parameters.playlists_l)
@@ -213,14 +192,6 @@ def main(args=None):
                                 parameters.scope, data)
             selectExport(imModel, imPhase=parameters.phase, parameters=parameters)
 
-    elif parameters.phase == 'import':
-        if parameters.target == "ym":
-            imModel = YandexMusic(parameters.ym_login,
-                                  parameters.ym_pass, data, source=parameters.source,
-                                  playlists_l=parameters.playlists_l)
-        else:
-            imModel = Spotify(parameters.sp_username, parameters.scope, data, source=parameters.source)
-        selectImport(imModel, parameters)
 
 
 # Импорт данных с учетом конфига/командных аргументов
@@ -257,7 +228,10 @@ def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
             imModel.export_playlists()
     if parameters.alltracks:
         if imSource == 'vk':
-            logging.error('vk alltracks export unavailable')
+            # data = VK.export_alltracks(
+                # imModel, datafile)
+            # print(data)
+            logging.error('vk alltracks export unavailable')    #БАГ API
             sys.exit()
         else:
             imModel.export_alltracks()

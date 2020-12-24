@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 import collections
 
 from yandex_music.client import Client
@@ -31,7 +31,7 @@ def get_auth(login, password):
 def export_playlists(vkaudio, datafile, specplaylist=Default.PLAYLIST_L):
     # Decide what we need to import
     logging.debug('GETPLAYLIST True')
-    all_playlist = vkaudio.get_albums()                                                           
+    all_playlist = vkaudio.get_albums()
     if specplaylist:
         logging.debug('PLAYLISTS_L TRUE')
         all_playlist = [album for album in all_playlist if album['title'].lower() in specplaylist]
@@ -53,10 +53,10 @@ def export_playlists(vkaudio, datafile, specplaylist=Default.PLAYLIST_L):
 
 
 # СУКИ ВСЁ СЛОМАЛИ НИЧЕ НЕ РАБОТАЕТ(
-def export_alltracks(vkaudio):
+def export_alltracks(vkaudio, datafile):
     data = []
     logging.debug('GETPLAYLIST False. exporting all tracks')
-    for item in vkaudio.get(owner_id='147086985'):            # get tracklist and convert it to dict
+    for item in vkaudio.get():            # get tracklist and convert it to dict
         artist_name = parse_artist(item['artist'].lower())
         track_title = item['title'].lower()
         logging.debug(track_title)
@@ -67,8 +67,6 @@ def export_alltracks(vkaudio):
     return data
 
 
-def export_data(data):
-    return data
 
 
 def seperate_albums():

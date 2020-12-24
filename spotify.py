@@ -126,43 +126,54 @@ class Spotify(object):
         self.sp.user_unfollow_artists(artist_ids)
 
     def import_playlists(self):
-        for item in self.export_data[self.source]["playlists"]:
+        for title, item in self.export_data[self.source.upper()]["playlists"].items():
             track_ids = []
-            for playlist in item:
-                track_ids = []
-                new_playlist = self.sp.user_playlist_create(
-                    user=self.username, name=playlist + '(Y.music)')
-                playlist_id = new_playlist['id']
-                playlist_name = new_playlist['name']
-                logging.debug(f"CREATED new playlist '{playlist_name}'")
+            new_playlist = self.sp.user_playlist_create(
+                user=self.username, name=title + f'({self.source.upper()})')
+            playlist_id = new_playlist['id']
+            playlist_name = new_playlist['name']
+            logging.debug(f"CREATED new playlist '{playlist_name}'")
+            for track in item:
+                results = self.sp.search(
+                    q=track[0] + ' ' + 'track:' + track[1], type='track')
+                tracks = results['tracks']
+                if len(tracks['items']) != 0:
+                    track_ids.append(tracks['items'][0]['id'])
+                    logging.debug(
+                        f"ADDED track '{tracks['items'][0]['name']}' to playlist '{playlist_name}'")
+                # if len(tracks['items']) == 1:
+                #     track_ids.append(tracks['items'][0]['id'])
+                #     logging.debug(
+                #         f"ADDED track '{tracks['items'][0]['name']}' to playlist '{playlist_name}'")
+                # elif len(tracks['items']) > 1:
+                #     artist_name = tracks['items'][0]['artists'][0]['name']
+                #     track_title = tracks['items'][0]['name']
+                #     album_title = tracks['items'][0]['album']['name']
+                #     if artist_name.casefold() == track[0] and track_title.casefold() == track[1].casefold():
+                #         track_ids.append(tracks['items'][0]['id'])
+                #         logging.debug(
+                #             f"ADDED track '{track_title}' to playlist '{playlist_name}'")
+                #     else:
+                #         logging.warning(
+                #             f"Track '{artist_name}-{track_title}' not in best match; verification needed")
+                # elif len(tracks['items']) == 0:
+                #     logging.error(
+                #         f"ERROR COULDNT FIND TRACK '{track[0]}-{track[1]}'")
+                else:
+                    logging.error(
+                                f"ERROR COULDNT FIND TRACK '{track[0]}-{track[1]}'")
 
-                for track in item[playlist]:
-                    results = self.sp.search(
-                        q='artist:' + track[0] + ' ' + 'track:' + track[1] + ' ' + 'album:' + track[2], type='track')
-                    tracks = results['tracks']
-                    if len(tracks['items']) == 1:
-                        track_ids.append(tracks['items'][0]['id'])
-                        logging.debug(
-                            f"ADDED track '{tracks['items'][0]['name']}' to playlist '{playlist_name}'")
-                    elif len(tracks['items']) > 1:
-                        artist_name = tracks['items'][0]['artists'][0]['name']
-                        track_title = tracks['items'][0]['name']
-                        album_title = tracks['items'][0]['album']['name']
-                        if artist_name.casefold() == track[0] and track_title.casefold() == track[1].casefold() and album_title.casefold() == track[2].casefold():
-                            track_ids.append(tracks['items'][0]['id'])
-                            logging.debug(
-                                f"ADDED track '{track_title}' to playlist '{playlist_name}'")
-                        else:
-                            logging.warning(
-                                f"Track '{artist_name}-{track_title}' not in best match; verification needed")
-                    elif len(tracks['items']) == 0:
-                        logging.error(
-                            f"ERROR COULDNT FIND TRACK '{track[0]}-{track[1]}'")
+            while len(track_ids) > 100:
                 self.sp.user_playlist_add_tracks(
-                    self.username, playlist_id, track_ids)
-                logging.debug(
-                    f"DONE {len(track_ids)} tracks added to playlist '{playlist_name}'")
-            logging.debug(f"DONE import playlists")
+                    self.username, playlist_id, track_ids[:100])
+                track_ids = track_ids[100:]
+
+            self.sp.user_playlist_add_tracks(
+                self.username, playlist_id, track_ids)
+            logging.debug(
+                f"DONE {len(track_ids)} tracks added to playlist '{playlist_name}'")
+
+        logging.debug(f"DONE import playlists")
 
     def import_artists(self):
         artists = self.export_data[self.source.upper()]["artists"]
@@ -171,41 +182,47 @@ class Spotify(object):
         for artist in artists:
             logging.debug(f"START search artist '{artist}'")
             results = self.sp.search(
-                q=artist, type='artist', market='US', limit=50)
+                q=artist + ' ', type='artist', limit=50, market='RU')
             items = results['artists']['items']
             logging.debug(
                 f"TOTAL ARTIST BY NICKNAME {artist} -- {len(results['artists']['items'])}")
 
             # unique name or translit from russian --> No need for verification
-            if len(items) == 1:
+            if len(items) != 0:
                 curr_artist = items[0]
                 artist_ids.append(curr_artist['id'])
                 logging.debug(
                     f"DONE search artist '({curr_artist['name']}-{artist}):{curr_artist['id']}'")
                 continue
+            # if len(items) == 1:
+            #     curr_artist = items[0]
+            #     artist_ids.append(curr_artist['id'])
+            #     logging.debug(
+            #         f"DONE search artist '({curr_artist['name']}-{artist}):{curr_artist['id']}'")
+            #     continue
 
-            # Many artists with same name/pattern in name --> Needs verifivcation
-            elif len(items) > 1:
-                if items[0]['name'] == artist or items[0]['name'].casefold() == artist.casefold():
-                    logging.debug(f"{items[0]['name']} <--> {artist} OK")
-                    curr_artist = items[0]
-                    artist_ids.append(curr_artist['id'])
-                    logging.debug(
-                        f"DONE search artist '({curr_artist['name']}-{artist}):{curr_artist['id']}'")
-                    continue
-                else:
-                    logging.debug(f"{items[0]['name']} != {artist} NOT OK")
-                    for item in items:
-                        if item['name'] == artist or item['name'].casefold() == artist.casefold():
-                            curr_artist = item
-                            artist_ids.append(curr_artist['id'])
-                            logging.debug(f"{item['name']} <--> {artist} OK")
-                            logging.debug(
-                                f"DONE search artist '({curr_artist['name']}-{artist}):{curr_artist['id']}'")
-                            break
-                        else:
-                            logging.debug(f"{item['name']} != {artist} NOT OK")
-                            continue
+            # # Many artists with same name/pattern in name --> Needs verifivcation
+            # elif len(items) > 1:
+            #     if items[0]['name'] == artist or items[0]['name'].casefold() == artist.casefold():
+            #         logging.debug(f"{items[0]['name']} <--> {artist} OK")
+            #         curr_artist = items[0]
+            #         artist_ids.append(curr_artist['id'])
+            #         logging.debug(
+            #             f"DONE search artist '({curr_artist['name']}-{artist}):{curr_artist['id']}'")
+            #         continue
+            #     else:
+            #         logging.debug(f"{items[0]['name']} != {artist} NOT OK")
+            #         for item in items:
+            #             if item['name'] == artist or item['name'].casefold() == artist.casefold():
+            #                 curr_artist = item
+            #                 artist_ids.append(curr_artist['id'])
+            #                 logging.debug(f"{item['name']} <--> {artist} OK")
+            #                 logging.debug(
+            #                     f"DONE search artist '({curr_artist['name']}-{artist}):{curr_artist['id']}'")
+            #                 break
+            #             else:
+            #                 logging.debug(f"{item['name']} != {artist} NOT OK")
+            #                 continue
             # Ooops!
             elif len(items) == 0:
                 logging.debug(
@@ -246,4 +263,45 @@ class Spotify(object):
 
 
     def import_alltracks(self):
-        pass
+        track_ids = []
+        alltracks = self.export_data[self.source.upper()]["alltracks"]
+        new_playlist = self.sp.user_playlist_create(
+                    user=self.username, name=f'All tracks({self.source.upper()})')
+        playlist_id = new_playlist['id']
+        playlist_name = new_playlist['name']
+        logging.debug(f"CREATED new playlist '{playlist_name}'")
+        for track in alltracks:
+            results = self.sp.search(
+                q=track[0] + ' ' + 'track:' + track[1] + ' ', type='track')
+            tracks = results['tracks']
+            if len(tracks['items']) != 0:
+                track_ids.append(tracks['items'][0]['id'])
+                logging.debug(
+                    f"ADDED track '{tracks['items'][0]['name']}' to playlist '{playlist_name}'")
+            # if len(tracks['items']) == 1:
+            #     track_ids.append(tracks['items'][0]['id'])
+            #     logging.debug(
+            #         f"ADDED track '{tracks['items'][0]['name']}' to playlist '{playlist_name}'")
+            # elif len(tracks['items']) > 1:
+            #     artist_name = tracks['items'][0]['artists'][0]['name']
+            #     track_title = tracks['items'][0]['name']
+            #     album_title = tracks['items'][0]['album']['name']
+            #     if artist_name.casefold() == track[0] and track_title.casefold() == track[1].casefold() and album_title.casefold() == track[2].casefold():
+            #         track_ids.append(tracks['items'][0]['id'])
+            #         logging.debug(
+            #             f"ADDED track '{track_title}' to playlist '{playlist_name}'")
+            #     else:
+            #         logging.warning(
+            #             f"Track '{artist_name}-{track_title}' not in best match; verification needed")
+            elif len(tracks['items']) == 0:
+                logging.error(
+                    f"ERROR COULDNT FIND TRACK '{track[0]}-{track[1]}'")
+        while len(track_ids) > 100:
+            self.sp.user_playlist_add_tracks(
+                self.username, playlist_id, track_ids[:100])
+            track_ids = track_ids[100:]
+
+        self.sp.user_playlist_add_tracks(
+            self.username, playlist_id, track_ids)
+        logging.debug(
+            f"DONE {len(track_ids)} tracks added to playlist '{playlist_name}'")
