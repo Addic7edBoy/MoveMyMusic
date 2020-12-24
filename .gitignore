@@ -6,3 +6,8 @@ vk_config*
 .vscode
 .python-version
 cheatsheet.txt
+dataTemplate.json
+dist/
+*.egg-info/
+*.egg
+build/

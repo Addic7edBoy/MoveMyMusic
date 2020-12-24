@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="MoveMyMusic-Addic7edBoy",  # Replace with your own username
+    name="Move-My-Music",  # Replace with your own username
     version="0.0.1",
     author="Max Medvedev",
     author_email="medve.mk@gmail.com",

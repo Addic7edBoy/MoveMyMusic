@@ -65,7 +65,7 @@ def clear_template(path=Default.DATATMP):
 def process_args(args, defaults):
 
     parser = argparse.ArgumentParser()
-    # parser.prog = 'moveMyMusic'
+    parser.prog = 'moveMyMusic'
 
     subparsers = parser.add_subparsers(title='subcommands',
                                        description='valid subcommands',
