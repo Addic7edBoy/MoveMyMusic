@@ -11,7 +11,7 @@ SP: export/import all music; export/import playlists; export albums; export favo
 
 
 Installation:
-pip3 install ///
+pip install Move-My-Music
 
 Configuration:
 
@@ -29,7 +29,7 @@ parameters:
     --playlists
 
 to import albums and playlists from Yandex.Music to Spotify:
-    run -s ym -t sp --playlists True --albums True
+    moveMyMusic run -s ym -t sp --playlists True --albums True
 
 If you want just to export data to json use 'export':
-    export vk --playlists True
+    moveMyMusic export vk --playlists True
