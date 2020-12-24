@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import collections
 from yandex_music.client import Client
-from config import Default
+from .config import Default
 import json
 import logging
 import requests

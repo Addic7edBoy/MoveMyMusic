@@ -1,7 +1,7 @@
-import VK
-from config import Default
-from yandexmusic import YandexMusic
-from spotify import Spotify
+from . import VK
+from .config import Default
+from .yandexmusic import YandexMusic
+from .spotify import Spotify
 import sys
 import argparse
 import json
@@ -65,7 +65,7 @@ def clear_template(path=Default.DATATMP):
 def process_args(args, defaults):
 
     parser = argparse.ArgumentParser()
-    parser.prog = 'moveMyMusic'
+    parser.prog = 'MMM'
 
     subparsers = parser.add_subparsers(title='subcommands',
                                        description='valid subcommands',

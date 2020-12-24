@@ -5,7 +5,7 @@ from yandex_music.client import Client
 
 import vk_api
 from vk_api.audio import VkAudio
-from config import Default
+from .config import Default
 import json
 import re
 import logging

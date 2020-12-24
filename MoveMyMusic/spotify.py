@@ -1,7 +1,7 @@
 import sys
 import spotipy
 import spotipy.util as util
-from config import Default
+from .config import Default
 import logging
 import collections
 import json
