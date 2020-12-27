@@ -5,7 +5,7 @@ VK, Yandex.Music, Spotify
 
 Here is a list of completed features for each service:
 VK: export all music; export playlists
-YM: export/import all music; export/import playlists; export albums; export favourite artists
+YM: export/import all music; export/import playlists; export/import albums; export/import favourite artists
 SP: export/import all music; export/import playlists; export albums; export favourite artists
 
 

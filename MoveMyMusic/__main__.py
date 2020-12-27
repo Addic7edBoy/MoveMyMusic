@@ -38,7 +38,6 @@ def repair_template(path):
         copy2(str(path) + '.example', str(path))
         logging.debug('example template successfully copied')
         return
-        # os.rename(str(path)+'.example', path)
 
 
 
@@ -157,21 +156,34 @@ def main(args=None):
     try:
         with open(data_path) as f:
             if parameters.clean_plate:
-                if parameters.phase != 'import':
-                    logging.warning(f"'clean-plate' flag is up. Reseting data file")
-                    clear_template(data_path)
-                else:
-                    logging.error(f"'clean-plate' flag is up, but was ignored due to 'import' phase")
+                logging.warning(f"'clean-plate' flag is up. Reseting data file")
+                clear_template(data_path)
             data = json.load(f)
     except FileNotFoundError as e:
         print('we got: ', e.__class__)
-        if parameters.phase == 'export':
-            pass
-        elif parameters.phase == 'import':
-            return 'you have nothing to import yet'
-        else:
-            return 'make sure file_path is correct'
-
+        print(parameters.data_path)
+        data = {
+            "YM": {
+                "artists": [],
+                "albums": [],
+                "playlists": {},
+                "alltracks": []
+            },
+            "SP": {
+                "artists": [],
+                "albums": [],
+                "playlists": {},
+                "alltracks": []
+            },
+            "VK": {
+                "artists": [],
+                "albums": [],
+                "playlists": {},
+                "alltracks": []
+            }
+        }
+        with open('dataTemplate.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
 
     if parameters.phase == 'export' or parameters.phase == 'run':
         if parameters.source == "vk":

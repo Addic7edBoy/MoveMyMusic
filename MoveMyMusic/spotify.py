@@ -99,7 +99,6 @@ class Spotify(object):
                                                     "artist": artist_name,
                                                     "tracks_count": len(tracks)
                                                     })
-            # self.export_data["SP"]["albums"][album_title + ' - ' + artist_name] = [track['name'] for track in tracks]
         while albums['next']:
             logging.debug('Exporting next page of albums...')
             albums = self.sp.next(albums)
@@ -112,7 +111,6 @@ class Spotify(object):
                     "artist": artist_name,
                     "tracks_count": len(tracks)
                 })
-                # self.export_data["SP"]["albums"][album_title + ' - ' + artist_name] = [track['name'] for track in tracks]
         logging.debug(
             f"DONE export albums, Total: {len(self.export_data['SP']['albums'])}")
 
@@ -135,7 +133,7 @@ class Spotify(object):
             logging.debug(f"CREATED new playlist '{playlist_name}'")
             for track in item:
                 results = self.sp.search(
-                    q=track[0] + ' ' + 'track:' + track[1], type='track')
+                    q=track[0] + ' ' + track[1], type='track')
                 tracks = results['tracks']
                 if len(tracks['items']) != 0:
                     track_ids.append(tracks['items'][0]['id'])
@@ -240,9 +238,8 @@ class Spotify(object):
             album_count = item["tracks_count"]
             try:
                 results = self.sp.search(
-                    q='album:' + album_title + ' ' + 'artist:' + artist_name, type='album')
+                    q='album:' + album_title + ' ' + artist_name, type='album')
                 search_artist = results['albums']['items'][0]['artists'][0]['name']
-                # artist_uri = results['albums']['items'][0]['artists'][0]['uri']
                 search_title = results['albums']['items'][0]['name']
                 search_uri = results['albums']['items'][0]['uri']
                 search_tracks = results['albums']['items'][0]['total_tracks']
@@ -272,7 +269,7 @@ class Spotify(object):
         logging.debug(f"CREATED new playlist '{playlist_name}'")
         for track in alltracks:
             results = self.sp.search(
-                q=track[0] + ' ' + 'track:' + track[1] + ' ', type='track')
+                q=track[0] + ' ' + track[1] + ' ', type='track')
             tracks = results['tracks']
             if len(tracks['items']) != 0:
                 track_ids.append(tracks['items'][0]['id'])

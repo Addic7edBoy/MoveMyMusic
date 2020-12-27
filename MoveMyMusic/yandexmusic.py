@@ -58,22 +58,17 @@ class YandexMusic(object):
             json.dump(info_dict, f, indent=4, ensure_ascii=False)
         return info_dict
 
-    # !!!! НЕ РАБОТАЕТ ИЗ-ЗА БАГА API
     def import_albums(self):
         import_albums = self.export_data[self.source.upper()]["albums"]
         for item in import_albums:
             album_title = item["title"]
             artist_name = item["artist"]
             album_count = item["tracks_count"]
-            logging.debug(f"{type(album_title)}, {type(artist_name)}")
             try:
                 search_text = album_title + ' ' + artist_name
-                logging.debug(type(search_text))
-                results = self.client.search(text='search_text', nocorrect=True, type_='album')['albums']['results'][0]
-                # results = self.client.search(text=search_text, nocorrect=True, type_='all') ###!!!!!!!!!!!SLOMALOS'
-                print(results)
+                results = self.client.search(text=search_text, nocorrect=True, type_="album")['albums']['results'][0]
                 search_title = results.title
-                search_artist = results.artists[0]
+                search_artist = results.artists[0].name
                 search_count = results.track_count
             except IndexError:
                 logging.error(
@@ -87,11 +82,8 @@ class YandexMusic(object):
                 logging.debug(
                     f"DONE album '{album_title}-{artist_name}' added")
 
-    # !!!! НЕ РАБОТАЕТ ИЗ-ЗА БАГА API
     def import_artists(self):
         artists = self.export_data[self.source.upper()]["artists"]
-        # tesss = self.find_artist("Marilyn Manson")
-        # print(tesss)
         for artist in artists:
             logging.debug(f"START search artist '{artist}'")
             try:
@@ -101,9 +93,10 @@ class YandexMusic(object):
                 artist_id = results.id
                 self.client.users_likes_artists_add(artist_ids=artist_id)
                 logging.debug(f"{search_artist} ADDED OK")
-            except IndexError:
+            except (IndexError, TypeError) as e:
                 logging.error(
                     f"COUDNT FIND ARTIST '{artist}' ON YANDEX MUSIC")
+                logging.error(e)
                 continue
 
     def import_playlists(self):
@@ -227,7 +220,6 @@ class YandexMusic(object):
         for like in liked_tracks:
             track_title = like.track.title
             artist_name = like.track.artists[0].name
-            # track_album = like.track.albums[0].title
             self.export_data["YM"]["alltracks"].append([artist_name, track_title])
             logging.debug(f"{artist_name} - {track_title} OK")
         logging.debug(f"DONE export playlist 'My favorites' TOTAL: {track_count}")
@@ -256,7 +248,6 @@ class YandexMusic(object):
                     continue
                 track_title = like.track.title
                 artist_name = like.track.artists[0].name
-                # track_album = like.track.albums[0].title
                 self.export_data["YM"]["playlists"][item].append([artist_name, track_title])
                 logging.debug(f"{artist_name} - {track_title} OK")
             logging.debug(f"DONE export playlist '{item}'")

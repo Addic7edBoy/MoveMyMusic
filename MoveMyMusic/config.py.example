@@ -5,31 +5,28 @@
 
 
 class Default(object):
-    # Auth VK
-    VK_LOGIN = "REPLACE_ME"      # your vk login
-    VK_PASSWORD = "REPLACE_ME"   # your vk password
-    api_config_path = 'MoveMyMusic/vk-config'     # path to where session cookies are gonna be stored    !!!make sure to keep this information safe!!!
 
-
-    # I/O
-    VK_PATH = 'MoveMyMusic/'
-
-    # Auth YANDEX MUSIC
+    # Account credentials
+    VK_LOGIN = "REPLACE_ME"
+    VK_PASSWORD = "REPLACE_ME"
     YM_LOGIN = "REPLACE_ME"
     YM_PASSWORD = "REPLACE_ME"
-    YM_TOKEN = ''
+    SP_USERNAME = "REPLACE_ME"
+
+    # App config
+    PLAYLIST = False
+    PLAYLIST_L = []     # select which albums e.g ['my playlist1', 'my playlist2']
+    ARTISTS = False
+    ALBUMS = False
+    ALLTRACKS = False
+    CLEAN_PLATE = False
+
+    # I/O
+    VK_PATH = './'
+    api_config_path = './vk-config'
+    DATATMP = './dataTemplate.json'
+    LOG_PATH = './logs'
 
     # Spotify API
     SP_CLIENT_ID = "REPLACE_ME"
     SP_CLIENT_SECRET = "REPLACE_ME"
-    SP_USERNAME = "REPLACE_ME"
-
-        # GENERAL
-    PLAYLIST = False     # by default gets tracks, set to True if album wanted
-    PLAYLIST_L = []     # select which albums e.g ['my playlist1', 'my playlist2'], default None(all)
-    ARTISTS = True
-    ALBUMS = True
-    ALLTRACKS = True
-    DATATMP = 'MoveMyMusic/dataTemplate.json'
-    LOG_PATH = 'MoveMyMusic/logs'
-    CLEAN_PLATE = False
