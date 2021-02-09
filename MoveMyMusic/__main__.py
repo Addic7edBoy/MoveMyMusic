@@ -89,7 +89,7 @@ def process_args(args, defaults):
     parser_model.set_defaults(data_path=defaults.DATATMP)
 
     parser_model.add_argument('--playlists', dest='playlists', metavar=defaults.PLAYLIST,
-                              type=str2bool, default=defaults.PLAYLIST,
+                              action='store_true', default=defaults.PLAYLIST,
                               help=('include playlists as well (default: %s)' % (defaults.PLAYLIST)))
 
     parser_model.add_argument('--clean-plate', dest='clean_plate',
@@ -97,11 +97,11 @@ def process_args(args, defaults):
                                 help='Delete all past records in dataTemplate')
 
     parser_model.add_argument('--artists', dest='artists', metavar=defaults.ARTISTS,
-                              type=str2bool, default=defaults.ARTISTS,
+                              action='store_true', default=defaults.ARTISTS,
                               help=('include artists as well (default: %s)' % (defaults.ARTISTS)))
 
     parser_model.add_argument('--albums', dest='albums', metavar=defaults.ALBUMS,
-                              type=str2bool, default=defaults.ALBUMS,
+                              action='store_true', default=defaults.ALBUMS,
                               help=('include albums as well (default: %s)' % (defaults.ALBUMS)))
 
     parser_model.add_argument('--playlists-l', dest='playlists_l',
@@ -110,7 +110,7 @@ def process_args(args, defaults):
                               help=('include albums as well (default: %s)' % (defaults.PLAYLIST_L)))
 
     parser_model.add_argument('--alltracks', dest='alltracks',
-                              metavar=defaults.ALLTRACKS, type=str2bool,
+                              metavar=defaults.ALLTRACKS, action='store_true',
                               default=Default.ALLTRACKS,
                               help=('include albums as well (default: %s)' % (defaults.ALLTRACKS)))
 
