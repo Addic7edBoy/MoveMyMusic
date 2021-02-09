@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="Move-My-Music",
-    version="0.0.3",
+    version="0.0.2dev1",
     author="Max Medvedev",
     author_email="medve.mk@gmail.com",
     description="Script to migrate music between platforms",

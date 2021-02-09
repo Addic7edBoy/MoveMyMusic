@@ -17,7 +17,7 @@ logging.getLogger('urllib3.connectionpool').setLevel(logging.ERROR)
 class Spotify(object):
     def __init__(self, username, scope, data, source=None):
         self.export_data = data
-        self.username = Default.SP_USERNAME
+        self.username = username
         self.source = source
         self.scope = 'user-library-modify user-library-read user-follow-read user-follow-modify playlist-read-private playlist-modify-public playlist-modify-private playlist-read-collaborative'
         token = util.prompt_for_user_token(

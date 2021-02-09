@@ -1,35 +1,59 @@
+# MMM
+
 Python module that helps move all your music and other stuff from one music service to another.
 
-At this point there are 3 available platforms:
-VK, Yandex.Music, Spotify
+## Features
 
-Here is a list of completed features for each service:
-VK: export all music; export playlists
-YM: export/import all music; export/import playlists; export/import albums; export/import favourite artists
-SP: export/import all music; export/import playlists; export albums; export favourite artists
+Moves **tracks**, **playlists**, **albums** and **artists** between `vk`, `Yandex.Music`, `Spotify`
 
 
+## Installation
 
-Installation:
+```
 pip install Move-My-Music
+```
 
-Configuration:
+## Usage
 
-First of all be sure to edit config.py.example into config.py and replace essential parameteres(your login info)
+### Exporting to JSON
 
-There are also default parameters. You can change them either in config.py or as console arguments.
+```
+MMM export --source vk --playlists True
+MMM export --source ym --artists True --albums True
+```
 
-Usage:
-!each parameter takes bool as input, if no parameter specified - default value will be set
+### Full run (export->import)
 
-parameters:
-    --albums
-    --alltracks
-    --artists
-    --playlists
+```
+MMM run --source vk --source-user Admin --source-pass Admin --target sp --target-user Max --target-pass Max --alltracks True --playlists True
+```
 
-to import albums and playlists from Yandex.Music to Spotify:
-    MMM run -s ym -t sp --playlists True --albums True
+## Parameters
 
-If you want just to export data to json use 'export':
-    MMM export vk --playlists True
+### Global
+
+* `--log-path`: Path for the log file.
+* `--data-path`: Filename for temp data.
+
+### Common
+
+* `--playlists` [True/False]: Include playlists (Default: False)
+* `--artists` [True/False]: Include artists (Default: False)
+* `--albums` [True/False]: Include albums (Default: False)
+* `--alltracks` [True/False]: Include all tracks (Default: False)
+
+### Export
+
+* `--source`: Get music from (`vk` | `ym` | `sp`)
+* `--source-user`: Login on source site.
+* `--source-pass`: Password on source site.
+
+### Run
+
+* `--source`: Get music from (`vk` | `ym` | `sp`)
+* `--source-user`: Login on source site.
+* `--source-pass`: Password on source site.
+* `--target`: Insert music into (`ym` | `sp`)
+* `--target-user`: Login on target site.
+* `--target-pass`: Password on target site.
+

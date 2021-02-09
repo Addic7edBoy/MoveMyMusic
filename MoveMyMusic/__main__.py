@@ -73,11 +73,6 @@ def process_args(args, defaults):
     parser_base = argparse.ArgumentParser(add_help=False)
 
     parser_base.set_defaults(scope=defaults.SCOPE)  # область необходимых разрешений для работы со spotify API
-    parser_base.set_defaults(vk_login=defaults.VK_LOGIN)
-    parser_base.set_defaults(vk_pass=defaults.VK_PASSWORD)
-    parser_base.set_defaults(ym_login=defaults.YM_LOGIN)
-    parser_base.set_defaults(ym_pass=defaults.YM_PASSWORD)
-    parser_base.set_defaults(sp_username=defaults.SP_USERNAME)
 
     parser_base.add_argument('--log-path', dest="log_path",
                              metavar=defaults.LOG_PATH,
@@ -119,14 +114,19 @@ def process_args(args, defaults):
                               default=Default.ALLTRACKS,
                               help=('include albums as well (default: %s)' % (defaults.ALLTRACKS)))
 
+    parser_model.add_argument('--source-user', dest='source_user',
+                              type=str, nargs=1, required=True, help='login for source site')
+
+    parser_model.add_argument('--source-pass', dest='source_pass',
+                              type=str, nargs=1, required=True, help='password for source site')
 
     # Аргументы для ЭКСПОРТА данных в файл
     export_parser = subparsers.add_parser('export', parents=[parser_base, parser_model],
                                           help='export music to json file')
     export_parser.set_defaults(phase='export')
 
-    export_parser.add_argument('source', choices=[
-                               "vk", "ym", "sp"], type=str, help='service_name to export music from')
+    export_parser.add_argument('-s', '--source', dest='source', required=True, choices=['vk', 'ym', 'sp'], type=str,
+                            help='service_name to fetch music from')
 
 
     # Аргументы для ПОЛНОГО ПОСЛЕДОВАТЕЛЬНОГО импорта<=>экспорта
@@ -139,6 +139,12 @@ def process_args(args, defaults):
 
     run_parser.add_argument('-t', '--target', required=True, dest='target', choices=[
                                "ym", "sp"], type=str, help='service_name to export music to')
+
+    run_parser.add_argument('--target-user', dest='target_user',
+                              type=str, nargs=1, required=True, help='login for target site')
+
+    run_parser.add_argument('--target-pass', dest='target_pass',
+                              type=str, nargs=1, required=True, help='password for target site')
 
     parameters = parser.parse_args(args)
     return parameters
@@ -187,8 +193,8 @@ def main(args=None):
 
     if parameters.phase == 'export' or parameters.phase == 'run':
         if parameters.source == "vk":
-            vkaudio = VK.get_auth(login=parameters.vk_login,
-                                  password=parameters.vk_pass)
+            vkaudio = VK.get_auth(login=parameters.source_user,
+                                  password=parameters.source_pass)
 
             # Сразу вызываем экспорт плейлиста, так как вк кал и больше ничего нельзя
             selectExport(imModel=vkaudio, imPhase=parameters.phase,
@@ -196,11 +202,11 @@ def main(args=None):
 
         elif parameters.source == 'ym':
             imModel = YandexMusic(
-                parameters.ym_login, parameters.ym_pass, data, playlists_l=parameters.playlists_l)
+                parameters.source_user, parameters.source_pass, data, playlists_l=parameters.playlists_l)
             selectExport(imModel, imPhase=parameters.phase, parameters=parameters)
 
         elif parameters.source == 'sp':
-            imModel = Spotify(parameters.sp_username,
+            imModel = Spotify(parameters.source_user,
                                 parameters.scope, data)
             selectExport(imModel, imPhase=parameters.phase, parameters=parameters)
 
@@ -269,11 +275,11 @@ def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
         with open('dataTemplate.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
         if parameters.target == 'sp':
-            imModel = Spotify(parameters.sp_username,
+            imModel = Spotify(parameters.target_user,
                     parameters.scope, data, source=parameters.source)
         elif parameters.target == 'ym':
             imModel = YandexMusic(
-                parameters.ym_login, parameters.ym_pass, data, playlists_l=parameters.playlists_l, source=parameters.source)
+                parameters.target_login, parameters.target_pass, data, playlists_l=parameters.playlists_l, source=parameters.source)
         status = selectImport(imModel, parameters)
         if status is not None:
             return "FULL RUN SUCCEDED"
