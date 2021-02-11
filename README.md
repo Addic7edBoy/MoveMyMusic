@@ -37,10 +37,10 @@ MMM run --source vk --source-user Admin --source-pass Admin --target sp --target
 
 ### Common
 
-* `--playlists` [True/False]: Include playlists (Default: False)
-* `--artists` [True/False]: Include artists (Default: False)
-* `--albums` [True/False]: Include albums (Default: False)
-* `--alltracks` [True/False]: Include all tracks (Default: False)
+* `--playlists`: Include playlists (Default: False)
+* `--artists`: Include artists (Default: False)
+* `--albums`: Include albums (Default: False)
+* `--alltracks`: Include all tracks (Default: False)
 
 ### Export
 

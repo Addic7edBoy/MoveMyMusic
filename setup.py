@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="Move-My-Music",
-    version="0.0.2dev1",
+    version="0.0.2dev2",
     author="Max Medvedev",
     author_email="medve.mk@gmail.com",
     description="Script to migrate music between platforms",
@@ -15,6 +15,14 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Addic7edBoy/MoveMyMusic",
     packages=setuptools.find_packages(),
+    install_requires=[
+        "vk-api",
+        "yandex-music",
+        "spotipy",
+        "six",
+        "beautifulsoup4",
+        "requests"
+    ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
