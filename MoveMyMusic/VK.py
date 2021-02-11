@@ -61,22 +61,10 @@ def export_alltracks(vkaudio, datafile):
         track_title = item['title'].lower()
         logging.debug(track_title)
         data.append([artist_name, track_title])
-        # if [track['artist'].lower(), track['title'].lower()] not in tracks_all:
-            # tracks_all.append([track['artist'].lower(), track['title'].lower()])
     logging.debug('all tracks export DONE. stats: list of list - {0}'.format(len(data)))
     return data
 
 
-
-
-def seperate_albums():
-    with open('ppart.json') as f:
-                    data = json.load(f)
-    for k,v in data["VK"]["playlists"].items():
-        for v in data["VK"]["playlists"][k]:
-            print(v[0])
-            # mysep.update(k,v[0])
-    # print(mysep)
 
 
 def parse_artist(artist_name):

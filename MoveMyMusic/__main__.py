@@ -235,7 +235,6 @@ def selectImport(imModel, parameters):
 # imSource - Откуда берем музыку ---> записывается в файл
 # imPhase - Какую часть кода выполнять:
 #                                   [export - получаение данных и запись,
-#                                   import - чтение данных их применение,
 #                                   run - получение => применение]
 
 def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
@@ -246,9 +245,6 @@ def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
             imModel.export_playlists()
     if parameters.alltracks:
         if imSource == 'vk':
-            # data = VK.export_alltracks(
-                # imModel, datafile)
-            # print(data)
             logging.error('vk alltracks export unavailable')    #БАГ API
             sys.exit()
         else:
