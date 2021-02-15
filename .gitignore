@@ -1,6 +1,6 @@
 __pycache__
 .cache-*
-config.py
+# config.py
 vk-config*
 vk_config*
 .vscode
@@ -11,3 +11,5 @@ dist/
 *.egg-info/
 *.egg
 build/
+.env
+

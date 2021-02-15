@@ -16,7 +16,7 @@ import os
 from shutil import copy2
 
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(filename=Default.LOG_PATH + 'running.log', filemode='w', level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
@@ -157,6 +157,9 @@ def main(args=None):
     parameters = process_args(args, Default)
     data_path = parameters.data_path
 
+    if not os.path.exists(parameters.log_path):
+        os.mkdir(parameters.log_path)
+
     # Проверяем существует ли дата файл и наличие содержимого
     # Таким образом пресекаем импорт до первого экспорта
     try:
@@ -166,8 +169,6 @@ def main(args=None):
                 clear_template(data_path)
             data = json.load(f)
     except FileNotFoundError as e:
-        print('we got: ', e.__class__)
-        print(parameters.data_path)
         data = {
             "YM": {
                 "artists": [],
@@ -266,6 +267,7 @@ def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
     if imPhase == 'export':
         with open('dataTemplate.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
+            logging.debug('EXPORT PHASE SUCCESS')
             return "SELECT EXPORT SUCCEDED"
     else:
         with open('dataTemplate.json', 'w', encoding='utf-8') as f:
@@ -280,6 +282,7 @@ def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
         if status is not None:
             return "FULL RUN SUCCEDED"
         else:
+            logging.debug('EXPORT PHASE SUCCESS')
             return "ERROR WRONG ARGUMENTS"
 
 
