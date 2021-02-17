@@ -10,8 +10,8 @@ import json
 import re
 import logging
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.DEBUG,
+                    # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 def get_auth(login, password):

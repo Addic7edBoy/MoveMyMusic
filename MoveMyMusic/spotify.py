@@ -1,3 +1,4 @@
+from spotipy.oauth2 import SpotifyOAuth
 import sys
 import spotipy
 import spotipy.util as util
@@ -8,8 +9,8 @@ import json
 import pprint
 import re
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.DEBUG,
+                    # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logging.getLogger('spotipy.client').setLevel(logging.ERROR)
 logging.getLogger('urllib3.connectionpool').setLevel(logging.ERROR)
 
@@ -19,18 +20,25 @@ class Spotify(object):
         self.export_data = data
         self.username = username
         self.source = source
-        self.scope = 'user-library-modify user-library-read user-follow-read user-follow-modify playlist-read-private playlist-modify-public playlist-modify-private playlist-read-collaborative'
-        token = util.prompt_for_user_token(
-            self.username,
-            self.scope,
-            client_id=Default.SP_CLIENT_ID,
-            client_secret=Default.SP_CLIENT_SECRET,
-            redirect_uri='http://example.com')
-        if token:
-            logging.debug(f'token OK: (token)')
-            self.sp = spotipy.Spotify(auth=token)
-        else:
-            logging.error(f"Can't get token for {self.username}")
+        self.scope = scope
+        # token = util.prompt_for_user_token(
+        #     self.username,
+        #     self.scope,
+        #     client_id=Default.SP_CLIENT_ID,
+        #     client_secret=Default.SP_CLIENT_SECRET,
+        #     redirect_uri='http://example.com',
+        #     cache_path='.cache-1')
+        # if token:
+        #     logging.debug(f'token OK: (token)')
+        #     self.sp = spotipy.Spotify(auth=token)
+        # else:
+        #     logging.error(f"Can't get token for {self.username}")
+
+
+
+        self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=Default.SP_CLIENT_ID, client_secret=Default.SP_CLIENT_SECRET,
+                                                            redirect_uri=Default.SP_REDIRECT_URI, username=self.username, scope=self.scope,
+                                                            show_dialog=True))
 
     def show_tracks(self, list_type, tracks, playlist_name=None):
         for i, item in enumerate(tracks['items']):

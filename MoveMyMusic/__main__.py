@@ -16,8 +16,8 @@ import os
 from shutil import copy2
 
 
-logging.basicConfig(filename=Default.LOG_PATH + 'running.log', filemode='w', level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# logging.basicConfig(filename=Default.LOG_PATH + 'running.log', filemode='w', level=logging.DEBUG,
+#                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 # converting strings like 'False True 0 1' to bool
@@ -88,7 +88,7 @@ def process_args(args, defaults):
 
     parser_model.set_defaults(data_path=defaults.DATATMP)
 
-    parser_model.add_argument('--playlists', dest='playlists', metavar=defaults.PLAYLIST,
+    parser_model.add_argument('--playlists', dest='playlists',
                               action='store_true', default=defaults.PLAYLIST,
                               help=('include playlists as well (default: %s)' % (defaults.PLAYLIST)))
 
@@ -96,21 +96,21 @@ def process_args(args, defaults):
                                 action='store_true', default=defaults.CLEAN_PLATE,
                                 help='Delete all past records in dataTemplate')
 
-    parser_model.add_argument('--artists', dest='artists', metavar=defaults.ARTISTS,
+    parser_model.add_argument('--artists', dest='artists',
                               action='store_true', default=defaults.ARTISTS,
                               help=('include artists as well (default: %s)' % (defaults.ARTISTS)))
 
-    parser_model.add_argument('--albums', dest='albums', metavar=defaults.ALBUMS,
+    parser_model.add_argument('--albums', dest='albums',
                               action='store_true', default=defaults.ALBUMS,
                               help=('include albums as well (default: %s)' % (defaults.ALBUMS)))
 
     parser_model.add_argument('--playlists-l', dest='playlists_l',
-                              metavar=defaults.PLAYLIST_L, nargs='+',
+                               nargs='+',
                               default=defaults.PLAYLIST_L,
                               help=('include albums as well (default: %s)' % (defaults.PLAYLIST_L)))
 
     parser_model.add_argument('--alltracks', dest='alltracks',
-                              metavar=defaults.ALLTRACKS, action='store_true',
+                              action='store_true',
                               default=Default.ALLTRACKS,
                               help=('include albums as well (default: %s)' % (defaults.ALLTRACKS)))
 
@@ -160,12 +160,15 @@ def main(args=None):
     if not os.path.exists(parameters.log_path):
         os.mkdir(parameters.log_path)
 
+    logging.basicConfig(filename=parameters.log_path + 'running.log', filemode='w', level=logging.DEBUG,
+                        format='%(asctime)s - %(levelname)s - %(message)s')
+
     # Проверяем существует ли дата файл и наличие содержимого
     # Таким образом пресекаем импорт до первого экспорта
     try:
         with open(data_path) as f:
             if parameters.clean_plate:
-                logging.warning(f"'clean-plate' flag is up. Reseting data file")
+                logging.warning(f"'clean-plate!!!!' flag is up. Reseting data file")
                 clear_template(data_path)
             data = json.load(f)
     except FileNotFoundError as e:
@@ -277,7 +280,7 @@ def selectExport(imModel, imPhase, parameters, imSource=None, datafile=None):
                     parameters.scope, data, source=parameters.source)
         elif parameters.target == 'ym':
             imModel = YandexMusic(
-                parameters.target_login, parameters.target_pass, data, playlists_l=parameters.playlists_l, source=parameters.source)
+                parameters.target_user, parameters.target_pass, data, playlists_l=parameters.playlists_l, source=parameters.source)
         status = selectImport(imModel, parameters)
         if status is not None:
             return "FULL RUN SUCCEDED"

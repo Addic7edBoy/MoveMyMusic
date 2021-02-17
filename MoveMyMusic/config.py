@@ -8,9 +8,10 @@ load_dotenv()
 
 class Default(object):
 
-    SP_CLIENT_ID = environ.get('SP_CLIENT_ID') or None
-    SP_CLIENT_SECRET = environ.get('SP_CLIENT_SECRET') or None
-    SCOPE = "user-library-read user-library-modify playlist-read-private playlist-modify-private"
+    SP_CLIENT_ID = environ.get('SPOTIPY_CLIENT_ID') or None
+    SP_CLIENT_SECRET = environ.get('SPOTIPY_CLIENT_SECRET') or None
+    SP_REDIRECT_URI = environ.get('SPOTIPY_REDIRECT_URI') or None
+    SCOPE = 'user-library-modify user-library-read user-follow-read user-follow-modify playlist-read-private playlist-modify-public playlist-modify-private playlist-read-collaborative'
 
     PLAYLIST = False
     PLAYLIST_L = []

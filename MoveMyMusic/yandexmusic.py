@@ -8,8 +8,8 @@ import requests
 import time
 
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.DEBUG,
+                    # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logging.getLogger('yandex_music').setLevel(logging.ERROR)
 
 
