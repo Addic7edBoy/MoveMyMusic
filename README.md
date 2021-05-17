@@ -15,17 +15,11 @@ pip install Move-My-Music
 
 ## Usage
 
-### Exporting to JSON
-
-```
-MMM export --source vk --playlists True
-MMM export --source ym --artists True --albums True
-```
 
 ### Full run (export->import)
 
 ```
-MMM run --source vk --source-user Admin --source-pass Admin --target sp --target-user Max --target-pass Max --alltracks True --playlists True
+MMM --source vk --source-user Admin --source-pass Admin --target sp --target-user Max --target-pass Max --alltracks --playlists
 ```
 
 ## Parameters
@@ -42,11 +36,6 @@ MMM run --source vk --source-user Admin --source-pass Admin --target sp --target
 * `--albums`: Include albums (Default: False)
 * `--alltracks`: Include all tracks (Default: False)
 
-### Export
-
-* `--source`: Get music from (`vk` | `ym` | `sp`)
-* `--source-user`: Login on source site.
-* `--source-pass`: Password on source site.
 
 ### Run
 
@@ -56,4 +45,3 @@ MMM run --source vk --source-user Admin --source-pass Admin --target sp --target
 * `--target`: Insert music into (`ym` | `sp`)
 * `--target-user`: Login on target site.
 * `--target-pass`: Password on target site.
-

@@ -16,6 +16,7 @@ import logging
 
 def get_auth(login, password):
     # init vk API session with given credentials
+    # logging.debug(login, type(login), password, type(password))
     vk_session = vk_api.VkApi(login, password)
     # Attempt to login into account
     try:
@@ -28,14 +29,18 @@ def get_auth(login, password):
     return vkaudio
 
 
-def export_playlists(vkaudio, datafile, specplaylist=Default.PLAYLIST_L):
+def get_playlists(vkaudio):
+    return vkaudio.get_albums()
+
+
+def export_playlists(vkaudio, datafile, playlist_chosen=None):
     # Decide what we need to import
     logging.debug('GETPLAYLIST True')
-    all_playlist = vkaudio.get_albums()
-    if specplaylist:
-        logging.debug('PLAYLISTS_L TRUE')
-        all_playlist = [album for album in all_playlist if album['title'].lower() in specplaylist]
-        logging.debug('found match {}'.format(len(all_playlist)))             # if user chose only specific playlists we check if names eq- with list comprehension
+    if playlist_chosen:
+        all_playlist = playlist_chosen
+    else:
+        all_playlist = get_playlists(vkaudio)
+
     logging.debug('get playlist tracks START')
     for item in all_playlist:
         playlist_title = item['title'].lower()        # get track list of each chosen playlist -> edit strings -> convert to dict
@@ -71,4 +76,3 @@ def parse_artist(artist_name):
     spec_symbols = re.split(', | \\.feat | feat\\. | ft | ft\\. | \\.ft| x | & ', artist_name)
     artist_name = spec_symbols[0].strip()
     return artist_name
-

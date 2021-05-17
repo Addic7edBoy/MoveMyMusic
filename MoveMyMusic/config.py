@@ -14,7 +14,6 @@ class Default(object):
     SCOPE = 'user-library-modify user-library-read user-follow-read user-follow-modify playlist-read-private playlist-modify-public playlist-modify-private playlist-read-collaborative'
 
     PLAYLIST = False
-    PLAYLIST_L = []
     ARTISTS = False
     ALBUMS = False
     ALLTRACKS = False

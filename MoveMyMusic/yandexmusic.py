@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import collections
 from yandex_music.client import Client
-from .config import Default
+from yandex_music.utils.difference import Difference
+# from .config import Default
 import json
 import logging
 import requests
@@ -14,49 +14,37 @@ logging.getLogger('yandex_music').setLevel(logging.ERROR)
 
 
 class YandexMusic(object):
-    def __init__(self, login, password, export_data, playlists_l, source=None):
+    def __init__(self, login, password, export_data, source=None):
         self.failed = []
+        self.login = login
+        self.password = password
         self.my_id = None
-        self.client = Client.from_credentials(login, password)
         self.export_data = export_data
-        self.playlists_l = playlists_l
         self.source = source
+        self.import_url = 'https://music.yandex.ru/handlers/import.jsx'
 
 
-    # Проверяем существует ли нужный плейлист. Нет - создаем с нужным тайтлом и возвращаем ID, Да - просто возвращаем ID
+    def get_auth(self):
+        self.client = Client.from_credentials(self.login, self.password)
+
+    def get_playlists(self):
+        return {playlist.title: playlist.kind for playlist in self.client.users_playlists_list() if playlist}
+
+
+    # Проверяет существует ли нужный плейлист. Нет - создаем с нужным тайтлом и возвращаем ID, Да - просто возвращаем ID
     def check_playlist(self, playlist_title):
         logging.debug(f"Checking if playlist '{playlist_title}' exists")
         my_playlists = self.client.users_playlists_list()
         for playlist in my_playlists:
             if playlist['title'] == playlist_title:
                 logging.debug(f'playlist "{playlist_title}" exists; its id: "{playlist["kind"]}"')
-                return (playlist['kind'], playlist['revision'])
+                return (playlist['kind'], playlist['revision'], playlist['track_count'])
 
         playlist_new = self.client.users_playlists_create(title=playlist_title)
         logging.debug(f"playlist '{playlist_title}' not found; created with id: '{playlist_new['kind']}'")
-        return (playlist_new['kind'], playlist_new['revision'])
 
+        return (playlist_new['kind'], playlist_new['revision'], playlist['track_count'])
 
-
-    # Поиск информации об исполнителе. Возвращает json файл: имя, ID, все альбомы, все треки
-    def find_artist(self, artist):
-        info_dict = collections.defaultdict(dict)
-        artist_info = self.client.search(text=artist, nocorrect=True, type_='artist')['artists']['results'][0]
-        artist_id = artist_info['id']
-        artist_albums = self.client.artists_direct_albums(artist_id=artist_id)['albums']
-        artist_tracks = self.client.artists_tracks(artist_id=artist_id, page_size=100)['tracks']
-        info_dict['artist_name'] = artist.lower()
-        info_dict['artist_id'] = artist_id
-        for album in artist_albums:
-            info_dict['artist_albums'][album['title'].lower()] = {
-                                                        'album_id': album['id'],
-                                                        'track_count': album['track_count']}
-        for track in artist_tracks:
-            info_dict['artist_tracks'][track['title'].lower()] = [track['id'], track['albums'][0]['title'].lower(), track['albums'][0]['id']]
-
-        with open('moo.json', 'w', encoding='utf-8') as f:
-            json.dump(info_dict, f, indent=4, ensure_ascii=False)
-        return info_dict
 
     def import_albums(self):
         import_albums = self.export_data[self.source.upper()]["albums"]
@@ -82,6 +70,7 @@ class YandexMusic(object):
                 logging.debug(
                     f"DONE album '{album_title}-{artist_name}' added")
 
+
     def import_artists(self):
         artists = self.export_data[self.source.upper()]["artists"]
         for artist in artists:
@@ -99,85 +88,116 @@ class YandexMusic(object):
                 logging.error(e)
                 continue
 
+
     def import_playlists(self):
         import_tracks = ''
-        url='https://music.yandex.ru/handlers/import.jsx'
         playlists = self.export_data[self.source.upper()]["playlists"]
         for title, tracks in playlists.items():
-            playlist_id, playlist_rev = self.check_playlist(title)
+            logging.debug(f'IMPORTING playlist {title}')
+            playlist_id, playlist_rev, playlist_trackCount = self.check_playlist(title)
+            time.sleep(3)
+            playlist_id, playlist_rev, playlist_trackCount = self.check_playlist(title)
             for item in tracks:
                 import_tracks += ' '.join(item) + '\n'
             string_of_songs=import_tracks.replace(' ','+')
             json_values={
                 'content':string_of_songs
             }
-            r1_import=requests.post(url,json=json_values)
-
-            # GET
-            id_import=json.loads(r1_import.text)['importCode']
-            params={
-                'code':id_import
-            }
-            resp=requests.get(url=url, params=params)
-            resp = json.loads(resp.text)
-            logging.debug(f"{resp['status']}")
-
             while True:
-                if resp['status'] == 'in-progress':
-                    logging.debug(f"{resp['status']}")
-                    time.sleep(2)
-                    r2_import=requests.get(url=url, params=params)
-                    resp = json.loads(r2_import.text)
-                elif resp['status'] == 'done':
-                    logging.debug(f"{resp['status']}")
-                    trackIds = resp['trackIds']
-                    print(trackIds)
+                r1_import = requests.post(self.import_url, json=json_values, allow_redirects=False)
+                if r1_import.status_code == 302:
+                    logging.warning('Request redirected to captcha. retrying...')
+                    time.sleep(3)
+                if r1_import.status_code == 200:
+                    logging.warning('Request Successful')
+                    id_import = json.loads(r1_import.text)['importCode']
                     break
 
-            for trackId in trackIds:
-                self.client.users_playlists_insert_track(playlist_id, trackId.split(':')[0], trackId.split(':')[1], revision=playlist_rev)
-                playlist_rev += 1
+
+            params = {
+                'code': id_import
+            }
+            time.sleep(3)
+
+            while True:
+                resp = requests.get(url=self.import_url,
+                                    params=params, allow_redirects=False)
+                if resp.status_code == 200:
+                    logging.warning('Request Successful')
+                    resp = json.loads(resp.text)
+                    if resp['status'] == 'in-progress':
+                        logging.warning('Search in progress. retrying...')
+                        time.sleep(3)
+                    elif resp['status'] == 'done':
+                        trackIds = resp['trackIds']
+                        logging.warning(f'Got trackIds for playlist {title}')
+                        break
+                else:
+                    logging.warning(
+                        'Request redirected to captcha. retrying...')
+                    time.sleep(3)
+
+            tracks_diff = [dict([('id', item.split(':')[0]),
+                                ('album_id', item.split(':')[1])]) for item in trackIds]
+            diff = Difference().add_insert(at=playlist_trackCount, tracks=tracks_diff)
+            self.client.users_playlists_change(
+                kind=playlist_id, diff=diff.to_json(), revision=playlist_rev)
+            logging.warning(f'IMPORTED playlist {title}')
 
 
     def import_alltracks(self):
         alltracks = self.export_data[self.source.upper()]["alltracks"]
         import_tracks = ''
-        url='https://music.yandex.ru/handlers/import.jsx'
         for item in alltracks:
             import_tracks += ' '.join(item) + '\n'
         string_of_songs=import_tracks.replace(' ','+')
+        playlist_id, playlist_rev, playlist_trackCount = self.check_playlist(f'ALL({self.source.upper()})')
+        time.sleep(3)
+        playlist_id, playlist_rev, playlist_trackCount = self.check_playlist(f'ALL({self.source.upper()})')
         json_values={
             'content':string_of_songs
         }
-        r1_import=requests.post(url,json=json_values)
+        while True:
+            r1_import = requests.post(
+                self.import_url, json=json_values, allow_redirects=False)
+            if r1_import.status_code == 302:
+                logging.warning(
+                    'Request redirected to captcha. retrying...')
+                time.sleep(3)
+            if r1_import.status_code == 200:
+                logging.warning('Request Successful')
+                id_import = json.loads(r1_import.text)['importCode']
+                break
 
-        # GET
-        id_import=json.loads(r1_import.text)['importCode']
-        url='https://music.yandex.ru/handlers/import.jsx'
-        params={
-            'code':id_import
+        params = {
+            'code': id_import
         }
-        resp=requests.get(url=url, params=params)
-        resp = json.loads(resp.text)
-        logging.debug(f"{resp['status']}")
+        time.sleep(3)
 
         while True:
-            if resp['status'] == 'in-progress':
-                logging.debug(f"{resp['status']}")
-                time.sleep(2)
-                r2_import=requests.get(url=url, params=params)
-                resp = json.loads(r2_import.text)
-            elif resp['status'] == 'done':
-                logging.debug(f"{resp['status']}")
-                trackIds = resp['trackIds']
-                print(trackIds)
-                break
-        playlist_id, playlist_rev = self.check_playlist(f'Все треки ({self.source.upper()})')
-        logging.debug(f"added 'Все треки ({self.source.upper()})'")
-        for trackId in trackIds:
-            self.client.users_playlists_insert_track(playlist_id, trackId.split(':')[0], trackId.split(':')[1], revision=playlist_rev)
-            playlist_rev += 1
-        # self.client.users_likes_tracks_add(track_ids=trackIds)
+            resp = requests.get(url=self.import_url,
+                                params=params, allow_redirects=False)
+            if resp.status_code == 200:
+                logging.warning('Request Successful')
+                resp = json.loads(resp.text)
+                if resp['status'] == 'in-progress':
+                    logging.warning('Search in progress. retrying...')
+                    time.sleep(3)
+                elif resp['status'] == 'done':
+                    trackIds = resp['trackIds']
+                    logging.warning(f'Got trackIds for playlist ALL({self.source.upper()})')
+                    break
+            else:
+                logging.warning(
+                    'Request redirected to captcha. retrying...')
+                time.sleep(3)
+
+        tracks_diff = [dict([('id', item.split(':')[0]),
+                                ('album_id', item.split(':')[1])]) for item in trackIds]
+        diff = Difference().add_insert(playlist_trackCount, tracks_diff)
+        self.client.users_playlists_change(
+            kind=playlist_id, diff=diff.to_json(), revision=playlist_rev)
+        logging.warning(f'IMPORTED playlist ALL({self.source.upper()})')
 
 
 
@@ -226,17 +246,16 @@ class YandexMusic(object):
 
 
 
-    def export_playlists(self):
-        my_playlists = {playlist.title: playlist.kind for playlist in self.client.users_playlists_list() if playlist}
-        logging.debug('my playlists: {}'.format([item for item in my_playlists.keys()]))
-        logging.debug('specified playlists: {}'.format(self.playlists_l))
-        if not self.playlists_l:
-            pass
+    def export_playlists(self, playlist_chosen=None):
+        if playlist_chosen:
+            my_playlists = playlist_chosen
         else:
-            my_playlists = {key:val for key,val in my_playlists.items() if key in  self.playlists_l}
+            my_playlists = self.get_playlists()
+
+        logging.debug('my playlists: {}'.format([item for item in my_playlists.keys()]))
         for item, playlist_id in my_playlists.items():
             try:
-                playlist = self.client.users_playlists(playlist_id)[0].tracks
+                playlist = self.client.users_playlists(playlist_id).tracks
             except KeyError:
                 logging.error(f"FAILED TO FIND PLAYLIST '{item}'")
                 continue
@@ -251,4 +270,3 @@ class YandexMusic(object):
                 self.export_data["YM"]["playlists"][item].append([artist_name, track_title])
                 logging.debug(f"{artist_name} - {track_title} OK")
             logging.debug(f"DONE export playlist '{item}'")
-

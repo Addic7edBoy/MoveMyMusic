@@ -12,4 +12,6 @@ dist/
 *.egg
 build/
 .env
-logs
+logs/
+auth.py
+ymtest.py

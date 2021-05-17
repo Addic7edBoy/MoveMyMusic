@@ -1,13 +1,8 @@
 from spotipy.oauth2 import SpotifyOAuth
-import sys
 import spotipy
 import spotipy.util as util
 from .config import Default
 import logging
-import collections
-import json
-import pprint
-import re
 
 # logging.basicConfig(level=logging.DEBUG,
                     # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -21,30 +16,24 @@ class Spotify(object):
         self.username = username
         self.source = source
         self.scope = scope
-        # token = util.prompt_for_user_token(
-        #     self.username,
-        #     self.scope,
-        #     client_id=Default.SP_CLIENT_ID,
-        #     client_secret=Default.SP_CLIENT_SECRET,
-        #     redirect_uri='http://example.com',
-        #     cache_path='.cache-1')
-        # if token:
-        #     logging.debug(f'token OK: (token)')
-        #     self.sp = spotipy.Spotify(auth=token)
-        # else:
-        #     logging.error(f"Can't get token for {self.username}")
 
 
-
+    def get_auth(self):
         self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=Default.SP_CLIENT_ID, client_secret=Default.SP_CLIENT_SECRET,
                                                             redirect_uri=Default.SP_REDIRECT_URI, username=self.username, scope=self.scope,
                                                             show_dialog=True))
 
+    def get_playlists(self):
+        playlist_names_dict = {}
+        playlists = self.sp.user_playlists(self.username)
+        for playlist in playlists['items']:
+            if playlist['owner']['id'] == self.username.lower():    # ONLY OWNED BY USER
+                playlist_names_dict[playlist['name']] = playlist['id']
+        return playlist_names_dict
+
     def show_tracks(self, list_type, tracks, playlist_name=None):
         for i, item in enumerate(tracks['items']):
             track = item['track']
-            print("   %d %32.32s %s" %
-                  (i, track['artists'][0]['name'], track['name']))
             if playlist_name:
                 self.export_data["SP"][list_type][playlist_name].append(
                     [track['name'], track['artists'][0]['name']])
