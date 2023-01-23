@@ -18,7 +18,7 @@ setuptools.setup(
     install_requires=[
         "vk-api==11.9.1",
         "yandex-music==1.0.0",
-        "spotipy==2.16.0",
+        "spotipy==2.22.1",
         "six",
         "beautifulsoup4",
         "requests",
